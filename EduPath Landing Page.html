@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPath — Хятад дахь боловсрол</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:    #0d1a2e;
+  --navy-mid:#162440;
+  --navy-lt: #1e3258;
+  --blue:    #3a6bcc;
+  --blue-lt: #5a8be0;
+  --gold:    #e8b84b;
+  --gold-lt: #f0cc7a;
+  --gold-dk: #b8882b;
+  --white:   #ffffff;
+  --off:     #f7f5f0;
+  --text:    #1a1a2e;
+  --muted:   #6b7280;
+  --serif:   'Playfair Display', Georgia, serif;
+  --sans:    'DM Sans', system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); color: var(--text); background: var(--white); overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 48px;
+  height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(13,26,46,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(232,184,75,0.15);
+  transition: background 0.3s;
+}
+.nav-logo {
+  font-family: var(--serif); font-size: 22px; font-weight: 700;
+  color: var(--white); letter-spacing: 0.5px; text-decoration: none;
+}
+.nav-logo span { color: var(--gold); }
+.nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+.nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 14px; font-weight: 400; letter-spacing: 0.2px; transition: color 0.2s; }
+.nav-links a:hover { color: var(--white); }
+.nav-cta {
+  padding: 9px 22px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 13px; font-weight: 500;
+  border: none; border-radius: 3px;
+  cursor: pointer; text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.nav-cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: var(--navy);
+  position: relative;
+  display: flex; align-items: flex-end;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(13,26,46,0.3) 0%, rgba(13,26,46,0.85) 65%, var(--navy) 100%);
+  z-index: 1;
+}
+/* Simulated photo placeholder with atmospheric texture */
+.hero-photo {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 70% 40%, rgba(58,107,204,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 60%, rgba(232,184,75,0.08) 0%, transparent 50%),
+    linear-gradient(135deg, #0d1a2e 0%, #162440 40%, #1e3258 70%, #162440 100%);
+  z-index: 0;
+}
+/* Silhouette suggestion */
+.hero-silhouette {
+  position: absolute; right: 8%; bottom: 0; width: 38%; height: 80%;
+  background: linear-gradient(to top, rgba(30,50,88,0.6), transparent);
+  border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+  opacity: 0.4; z-index: 1;
+}
+.hero-img-label {
+  position: absolute; top: 50%; right: 6%; transform: translateY(-50%);
+  width: 280px; height: 340px;
+  border: 1.5px dashed rgba(255,255,255,0.2);
+  border-radius: 4px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  z-index: 2;
+  background: rgba(255,255,255,0.04);
+}
+.hero-img-label svg { opacity: 0.3; }
+.hero-img-label span { font-size: 11px; color: rgba(255,255,255,0.35); font-family: var(--sans); letter-spacing: 1px; text-transform: uppercase; }
+
+.hero-content {
+  position: relative; z-index: 3;
+  padding: 0 80px 80px;
+  max-width: 760px;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 14px;
+  border: 1px solid rgba(232,184,75,0.5);
+  border-radius: 2px;
+  margin-bottom: 28px;
+  background: rgba(232,184,75,0.08);
+}
+.hero-badge span { font-size: 12px; color: var(--gold-lt); letter-spacing: 0.8px; font-weight: 400; }
+.hero-badge::before { content: '✦'; color: var(--gold); font-size: 10px; }
+
+h1.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 20px;
+  text-wrap: pretty;
+}
+h1.hero-title em { color: var(--gold); font-style: italic; }
+
+.hero-sub {
+  font-size: 17px; line-height: 1.65;
+  color: rgba(255,255,255,0.65);
+  max-width: 460px;
+  margin-bottom: 36px;
+  font-weight: 300;
+}
+.hero-actions { display: flex; gap: 14px; align-items: center; margin-bottom: 52px; }
+.btn-primary {
+  padding: 14px 30px;
+  background: var(--gold); color: var(--navy);
+  font-size: 15px; font-weight: 500;
+  border: none; border-radius: 3px; cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--gold-lt); transform: translateY(-1px); }
+.btn-ghost {
+  padding: 13px 28px;
+  background: transparent; color: rgba(255,255,255,0.8);
+  font-size: 15px; font-weight: 400;
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 3px; cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.6); color: var(--white); }
+
+.hero-stats { display: flex; gap: 40px; }
+.stat-item { display: flex; flex-direction: column; gap: 3px; }
+.stat-num {
+  font-family: var(--serif); font-size: 34px; font-weight: 700;
+  color: var(--gold); line-height: 1;
+}
+.stat-label { font-size: 12px; color: rgba(255,255,255,0.45); letter-spacing: 0.5px; }
+.stat-divider { width: 1px; background: rgba(255,255,255,0.1); align-self: stretch; }
+
+/* ── SCROLL CARET ── */
+.scroll-cue {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  opacity: 0.4;
+  animation: bounce 2.4s ease-in-out infinite;
+}
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+.scroll-cue svg { color: rgba(255,255,255,0.6); }
+
+/* ── SECTION COMMONS ── */
+section { padding: 96px 80px; }
+.section-tag {
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold-dk); margin-bottom: 12px; display: block;
+  font-weight: 500;
+}
+h2.section-title {
+  font-family: var(--serif); font-size: clamp(28px, 4vw, 46px); font-weight: 700;
+  line-height: 1.1; color: var(--navy); margin-bottom: 14px;
+  text-wrap: pretty;
+}
+h2.section-title em { color: var(--blue); font-style: italic; }
+.section-sub {
+  font-size: 16px; line-height: 1.7; color: var(--muted);
+  max-width: 520px; margin-bottom: 52px; font-weight: 300;
+}
+
+/* ── SERVICES ── */
+.services { background: var(--off); }
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.service-card {
+  border-radius: 4px; overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+.service-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
+.service-card-top {
+  height: 200px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 24px;
+  position: relative; overflow: hidden;
+}
+.sc-1 .service-card-top { background: linear-gradient(135deg, #0d1a2e, #1e3258); }
+.sc-2 .service-card-top { background: linear-gradient(135deg, #1a2e50, #3a6bcc); }
+.sc-3 .service-card-top { background: linear-gradient(135deg, #2e1a0a, #8b4a1a); }
+.service-icon {
+  width: 44px; height: 44px; border-radius: 3px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 12px;
+}
+.service-card-top h3 {
+  font-family: var(--serif); font-size: 20px; font-weight: 600;
+  color: var(--white); line-height: 1.2;
+}
+.service-card-top .sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 3px; }
+.service-card-body { background: var(--white); padding: 24px; flex: 1; }
+.service-card-body p { font-size: 14px; line-height: 1.7; color: var(--muted); margin-bottom: 16px; }
+.service-tag {
+  display: inline-block; padding: 3px 10px;
+  border-radius: 2px; font-size: 11px; letter-spacing: 0.5px;
+  border: 1px solid; margin-right: 5px; margin-bottom: 5px;
+}
+.sc-1 .service-tag { border-color: rgba(58,107,204,0.3); color: var(--blue); }
+.sc-2 .service-tag { border-color: rgba(58,107,204,0.3); color: var(--blue); }
+.sc-3 .service-tag { border-color: rgba(184,136,43,0.4); color: var(--gold-dk); }
+.service-link { font-size: 13px; color: var(--blue); text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 5px; margin-top: 12px; }
+.service-link:hover { color: var(--navy); }
+
+/* ── HOW IT WORKS ── */
+.hiw { background: var(--navy); }
+.hiw .section-tag { color: rgba(232,184,75,0.7); }
+.hiw h2.section-title { color: var(--white); }
+.hiw h2.section-title em { color: var(--gold); }
+.hiw .section-sub { color: rgba(255,255,255,0.5); }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+.steps::before {
+  content: '';
+  position: absolute; top: 32px; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(232,184,75,0.3), rgba(232,184,75,0.3), transparent);
+}
+.step { padding: 0 20px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.step-num {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; position: relative; z-index: 1;
+  background: var(--navy-lt); border: 2px solid rgba(232,184,75,0.3);
+  font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--gold);
+  transition: background 0.2s, border-color 0.2s;
+}
+.step:hover .step-num { background: rgba(232,184,75,0.12); border-color: var(--gold); }
+.step-title { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+.step-desc { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.45); }
+
+/* ── SCHOOLS ── */
+.schools { background: var(--off); padding-bottom: 80px; }
+.schools-intro { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; }
+.schools-intro .left { max-width: 480px; }
+.schools-intro .section-sub { margin-bottom: 0; }
+.schools-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.school-card {
+  padding: 20px 12px;
+  background: var(--white); border: 1px solid #e8e4df;
+  border-radius: 3px; text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: default;
+}
+.school-card:hover { border-color: var(--gold); box-shadow: 0 6px 24px rgba(0,0,0,0.07); transform: translateY(-2px); }
+.school-abbr { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--navy); display: block; margin-bottom: 3px; }
+.school-full { font-size: 10px; color: var(--muted); letter-spacing: 0.3px; display: block; }
+.school-rank { font-size: 10px; color: var(--gold-dk); margin-top: 4px; display: block; }
+
+/* ── TESTIMONIALS (Before/After) ── */
+.testimonials { background: var(--white); }
+.ba-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.ba-card {
+  border: 1px solid #e8e4df; border-radius: 4px; overflow: hidden;
+}
+.ba-header {
+  padding: 20px 24px; background: var(--off);
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid #e8e4df;
+}
+.ba-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy-lt), var(--blue));
+  border: 2px solid #e8e4df; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 18px; color: rgba(255,255,255,0.8);
+  font-weight: 600;
+}
+.ba-person h4 { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--navy); }
+.ba-person .school-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--blue); margin-top: 2px;
+}
+.ba-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.ba-section-label {
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 8px; font-weight: 500;
+}
+.before .ba-section-label { color: var(--muted); }
+.after .ba-section-label { color: var(--gold-dk); }
+.ba-block {
+  padding: 14px 16px; border-radius: 3px;
+}
+.before { background: #f7f5f0; border-left: 3px solid #d1ccc6; }
+.after { background: rgba(232,184,75,0.08); border-left: 3px solid var(--gold); }
+.ba-block p { font-size: 13px; line-height: 1.7; color: var(--text); }
+.ba-quote { font-size: 13px; line-height: 1.7; color: var(--muted); font-style: italic; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; }
+.ba-stars { color: var(--gold); font-size: 13px; letter-spacing: 2px; }
+
+/* ── CTA ── */
+.cta-section {
+  background: linear-gradient(135deg, #0d1a2e 0%, #162440 50%, #1a2e50 100%);
+  padding: 96px 80px;
+  display: flex; align-items: center; justify-content: space-between; gap: 48px;
+  position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; top: -80px; right: -80px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,184,75,0.06) 0%, transparent 70%);
+}
+.cta-section::after {
+  content: '';
+  position: absolute; bottom: -60px; left: -60px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(58,107,204,0.08) 0%, transparent 70%);
+}
+.cta-content { position: relative; z-index: 1; }
+.cta-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid rgba(232,184,75,0.35); border-radius: 2px;
+  font-size: 11px; color: var(--gold-lt); letter-spacing: 0.8px;
+  margin-bottom: 20px;
+}
+.cta-badge::before { content: '✦'; font-size: 9px; color: var(--gold); }
+h2.cta-title {
+  font-family: var(--serif); font-size: clamp(30px, 4vw, 50px); font-weight: 700;
+  color: var(--white); line-height: 1.1; margin-bottom: 14px;
+  text-wrap: pretty;
+}
+h2.cta-title em { color: var(--gold); font-style: italic; }
+.cta-sub { font-size: 16px; color: rgba(255,255,255,0.5); font-weight: 300; }
+.cta-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; flex-shrink: 0; position: relative; z-index: 1; }
+.cta-note { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.3px; }
+
+/* ── CONTACT ── */
+.contact { background: var(--off); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.contact-info h2 { margin-bottom: 16px; }
+.contact-info .section-sub { margin-bottom: 32px; }
+.contact-detail { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.contact-icon { width: 36px; height: 36px; border-radius: 3px; background: var(--white); border: 1px solid #e0dbd4; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.contact-text strong { font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
+.contact-text span { font-size: 14px; color: var(--text); }
+.social-row { display: flex; gap: 10px; margin-top: 28px; }
+.social-btn {
+  padding: 8px 16px; border: 1px solid #d8d3cc; border-radius: 3px;
+  background: var(--white); font-size: 12px; color: var(--text);
+  cursor: pointer; text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.social-btn:hover { border-color: var(--navy); background: var(--navy); color: var(--white); }
+
+/* ── FORM ── */
+.contact-form { background: var(--white); padding: 36px; border-radius: 4px; border: 1px solid #e8e4df; }
+.contact-form h3 { font-family: var(--serif); font-size: 22px; font-weight: 600; margin-bottom: 24px; color: var(--navy); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.form-group label { font-size: 12px; letter-spacing: 0.5px; font-weight: 500; color: var(--muted); text-transform: uppercase; }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 11px 14px;
+  border: 1px solid #ddd; border-radius: 3px;
+  font-family: var(--sans); font-size: 14px; color: var(--text);
+  background: var(--white);
+  outline: none; transition: border-color 0.2s;
+  -webkit-appearance: none; appearance: none;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); }
+.form-group textarea { resize: none; min-height: 90px; }
+.form-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+.form-submit {
+  width: 100%; padding: 14px;
+  background: var(--navy); color: var(--white);
+  font-family: var(--sans); font-size: 15px; font-weight: 500;
+  border: none; border-radius: 3px; cursor: pointer;
+  transition: background 0.2s; letter-spacing: 0.2px;
+  margin-top: 4px;
+}
+.form-submit:hover { background: var(--navy-lt); }
+.form-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy);
+  padding: 32px 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid rgba(232,184,75,0.1);
+}
+.footer-logo { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--white); }
+.footer-logo span { color: var(--gold); }
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); }
+.footer-links { display: flex; gap: 20px; list-style: none; }
+.footer-links a { font-size: 12px; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--white); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+.fade-up-1 { animation-delay: 0.1s; }
+.fade-up-2 { animation-delay: 0.25s; }
+.fade-up-3 { animation-delay: 0.4s; }
+.fade-up-4 { animation-delay: 0.55s; }
+.fade-up-5 { animation-delay: 0.7s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  section { padding: 64px 24px; }
+  .hero-content { padding: 0 24px 64px; }
+  .hero-img-label { display: none; }
+  .services-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .steps::before { display: none; }
+  .schools-grid { grid-template-columns: repeat(3, 1fr); }
+  .schools-intro { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .ba-grid { grid-template-columns: 1fr; }
+  .cta-section { flex-direction: column; padding: 64px 24px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer { flex-direction: column; gap: 16px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Edu<span>Path</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Үйлчилгээ</a></li>
+    <li><a href="#how">Хэрхэн</a></li>
+    <li><a href="#schools">Сургуулиуд</a></li>
+    <li><a href="#stories">Амжилт</a></li>
+    <li><a href="#contact" class="nav-cta">Зөвлөгөө авах</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-photo"></div>
+  <div class="hero-bg"></div>
+  <div class="hero-silhouette"></div>
+
+  <!-- Photo placeholder frame -->
+  <div class="hero-img-label">
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <rect x="4" y="8" width="40" height="32" rx="3" stroke="white" stroke-width="1.5"/>
+      <circle cx="16" cy="19" r="4" stroke="white" stroke-width="1.5"/>
+      <path d="M4 36l10-10 8 8 6-6 10 10" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+    <span>Оюутнуудын фото</span>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge fade-up fade-up-1">
+      <span>200 гаруй оюутан амжилтанд хүрсэн</span>
+    </div>
+    <h1 class="hero-title fade-up fade-up-2">
+      Чиний мөрөөдлийн<br/>сургуульд<br/><em>хамт хүрнэ</em>
+    </h1>
+    <p class="hero-sub fade-up fade-up-3">
+      Хятадын шилдэг их сургуулиудад элсэхэд чиглэсэн мэргэжлийн зөвлөх, бэлдэлт, дэмжлэг.
+    </p>
+    <div class="hero-actions fade-up fade-up-4">
+      <a href="#contact" class="btn-primary">Үнэгүй зөвлөгөө авах →</a>
+      <a href="#services" class="btn-ghost">Үйлчилгээ харах</a>
+    </div>
+    <div class="hero-stats fade-up fade-up-5">
+      <div class="stat-item">
+        <span class="stat-num">200+</span>
+        <span class="stat-label">Амжилттай оюутан</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">95%</span>
+        <span class="stat-label">Амжилтын хувь</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">8жил</span>
+        <span class="stat-label">Туршлага</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">30+</span>
+        <span class="stat-label">Их сургууль</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M10 4v12M5 11l5 5 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <span class="section-tag">Үйлчилгээ</span>
+  <h2 class="section-title">Танд зориулсан <em>шийдэл</em></h2>
+  <p class="section-sub">Элсэлтийн бүх үе шатыг бид хамт туулна — анхны зөвлөгөөнөөс дипломоо гартаа барих хүртэл.</p>
+
+  <div class="services-grid">
+    <!-- Card 1 -->
+    <div class="service-card sc-1">
+      <div class="service-card-top">
+        <div class="service-icon">🏛️</div>
+        <h3>Их сургуулийн зуучлал</h3>
+        <p class="sub">Тохиромжтой сургуулийн сонголт</p>
+      </div>
+      <div class="service-card-body">
+        <p>Таны зорилго, мэргэжлийн хүсэл, хэлний түвшингийн үндсэн дээр хамгийн тохирох сургуулиудыг сонгон, бүрэн дэмжлэг үзүүлнэ.</p>
+        <div>
+          <span class="service-tag">PKU</span>
+          <span class="service-tag">Fudan</span>
+          <span class="service-tag">SJTU</span>
+          <span class="service-tag">+27</span>
+        </div>
+        <a href="#contact" class="service-link">Дэлгэрэнгүй →</a>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="service-card sc-2">
+      <div class="service-card-top">
+        <div class="service-icon">🤝</div>
+        <h3>Mentorship хөтөлбөр</h3>
+        <p class="sub">Хувийн зөвлөх, 1:1 туслалцаа</p>
+      </div>
+      <div class="service-card-body">
+        <p>Хятадад суралцаж байгаа Монгол оюутнуудтай танилцуулж, шууд туршлага дамжуулна. Сурах, амьдрах, тохирох заавар нэг дороос.</p>
+        <div>
+          <span class="service-tag">1:1 Зөвлөх</span>
+          <span class="service-tag">Alumni сүлжээ</span>
+        </div>
+        <a href="#contact" class="service-link">Дэлгэрэнгүй →</a>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="service-card sc-3">
+      <div class="service-card-top">
+        <div class="service-icon">📚</div>
+        <h3>Эрчимт сургалт</h3>
+        <p class="sub">7–28 хоногийн бэлдэлт</p>
+      </div>
+      <div class="service-card-body">
+        <p>Хятад хэлний эрчимт сургалт, HSK бэлтгэл, эссе бичих, ярилцлагын дэмжлэг. Таны хэрэгцээнд тохируулсан хуваарь.</p>
+        <div>
+          <span class="service-tag">HSK 4–6</span>
+          <span class="service-tag">Ярилцлага</span>
+          <span class="service-tag">Эссе</span>
+        </div>
+        <a href="#contact" class="service-link">Дэлгэрэнгүй →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="hiw" id="how">
+  <span class="section-tag">Процесс</span>
+  <h2 class="section-title" style="color:var(--white)">4 алхамаар <em>амжилтанд хүр</em></h2>
+  <p class="section-sub">Бүртгэлээс эхлэн сургуульдаа суух хүртэл — бид таны хажууд байна.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3 class="step-title">Бүртгэл</h3>
+      <p class="step-desc">Маягт бөглөж, үнэгүй анхны зөвлөгөөгөө авна. Зорилго, мөрөөдлөө ярилцана.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3 class="step-title">Тохиролцоо</h3>
+      <p class="step-desc">Мэргэжилтэнтэй уулзаж, тохирох сургуулиудыг тодруулна. Хувийн төлөвлөгөө гаргана.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3 class="step-title">Бэлдэлт</h3>
+      <p class="step-desc">Хэлний сургалт, эссе, бичиг баримт бэлдэлт. Ярилцлагад зориулсан дасгал, дэмжлэг.</p>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:rgba(232,184,75,0.15);border-color:var(--gold)">4</div>
+      <h3 class="step-title">Амжилт</h3>
+      <p class="step-desc">Мөрөөдлийн сургуульдаа элсэж, шинэ амьдралаа эхлүүлнэ. Бид таны хажууд үргэлж байна.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCHOOLS -->
+<section class="schools" id="schools">
+  <div class="schools-intro">
+    <div class="left">
+      <span class="section-tag">Хамтрагч их сургуулиуд</span>
+      <h2 class="section-title">Хятадын <em>шилдэг</em> сургуулиуд</h2>
+      <p class="section-sub">QS Rankings-ийн дагуу шилдэг 30 гаруй их сургуульд оюутнуудаа амжилттай элсүүлж байна.</p>
+    </div>
+    <a href="#contact" class="btn-primary" style="flex-shrink:0">Зөвлөгөө авах →</a>
+  </div>
+  <div class="schools-grid">
+    <div class="school-card"><span class="school-abbr">PKU</span><span class="school-full">Peking University</span><span class="school-rank">QS #14</span></div>
+    <div class="school-card"><span class="school-abbr">THU</span><span class="school-full">Tsinghua Univ.</span><span class="school-rank">QS #25</span></div>
+    <div class="school-card"><span class="school-abbr">Fudan</span><span class="school-full">Fudan University</span><span class="school-rank">QS #39</span></div>
+    <div class="school-card"><span class="school-abbr">SJTU</span><span class="school-full">Shanghai Jiao Tong</span><span class="school-rank">QS #51</span></div>
+    <div class="school-card"><span class="school-abbr">ZJU</span><span class="school-full">Zhejiang Univ.</span><span class="school-rank">QS #65</span></div>
+    <div class="school-card"><span class="school-abbr">NJU</span><span class="school-full">Nanjing Univ.</span><span class="school-rank">QS #133</span></div>
+    <div class="school-card"><span class="school-abbr">CUHK</span><span class="school-full">Chinese Univ. HK</span><span class="school-rank">QS #47</span></div>
+    <div class="school-card"><span class="school-abbr">HIT</span><span class="school-full">Harbin Inst. Tech</span><span class="school-rank">QS #392</span></div>
+    <div class="school-card"><span class="school-abbr">BNU</span><span class="school-full">Beijing Normal</span><span class="school-rank">Top 10 MN</span></div>
+    <div class="school-card"><span class="school-abbr">ECNU</span><span class="school-full">E. China Normal</span><span class="school-rank">Top choice</span></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="stories">
+  <span class="section-tag">Амжилтын түүхүүд</span>
+  <h2 class="section-title">Өмнө нь<em>—</em> одоо <em>хаана байна</em></h2>
+  <p class="section-sub">EduPath-тай хамтарсан оюутнуудын бодит туршлага — өөрсдийн үгсээр.</p>
+
+  <div class="ba-grid">
+    <!-- Story 1 -->
+    <div class="ba-card">
+      <div class="ba-header">
+        <div class="ba-avatar">Н</div>
+        <div class="ba-person">
+          <h4>Номин Дорж</h4>
+          <span class="school-badge">🏛 Peking University · 2024</span>
+        </div>
+      </div>
+      <div class="ba-body">
+        <div class="ba-block before">
+          <div class="ba-section-label">Өмнө нь</div>
+          <p>HSK 3 хэрвэн давж чадахаа мэдэхгүй, аль сургуульд элсэх вэ гэдгээ ч тодорхойгүй байсан. Гадаадад суралцах боломж надад байна уу гэж эргэлздэг байлаа.</p>
+        </div>
+        <div class="ba-block after">
+          <div class="ba-section-label">Одоо</div>
+          <p>PKU-ийн Эдийн засгийн тэнхимд 2-р жилдээ сурч байна. Тэтгэлэгтэй, хятад найзуудтай, болж чадна гэдгийг мэдэрч байна.</p>
+        </div>
+        <div class="ba-stars">★★★★★</div>
+        <p class="ba-quote">"EduPath байгаагүй бол би энд хүрэхгүй байх байсан."</p>
+      </div>
+    </div>
+
+    <!-- Story 2 -->
+    <div class="ba-card">
+      <div class="ba-header">
+        <div class="ba-avatar" style="background:linear-gradient(135deg,#2e1a50,#8b4a1a)">А</div>
+        <div class="ba-person">
+          <h4>Анхбаяр Тувшин</h4>
+          <span class="school-badge">🏛 Fudan University · 2023</span>
+        </div>
+      </div>
+      <div class="ba-body">
+        <div class="ba-block before">
+          <div class="ba-section-label">Өмнө нь</div>
+          <p>Хятад хэл огт мэддэггүй, МУИС-д суралцаад ирээдүйгийн тухай бодохоосоо айдаг байсан. Ухаантай сонголт хийнэ гэж боддог байсан ч хаанаас эхлэхийг мэдэхгүй.</p>
+        </div>
+        <div class="ba-block after">
+          <div class="ba-section-label">Одоо</div>
+          <p>Fudan-д Олон улсын харилцаа сурч, Хятадын компанид дадлага хийж байна. Хятад хэлээр чөлөөтэй ярьдаг боллоо.</p>
+        </div>
+        <div class="ba-stars">★★★★★</div>
+        <p class="ba-quote">"Ердөө нэг жилд миний амьдрал бүрэн өөрчлөгдсөн."</p>
+      </div>
+    </div>
+
+    <!-- Story 3 -->
+    <div class="ba-card">
+      <div class="ba-header">
+        <div class="ba-avatar" style="background:linear-gradient(135deg,#0a2e1a,#1a6b3a)">Ц</div>
+        <div class="ba-person">
+          <h4>Цэнд-Аюуш Батбаатар</h4>
+          <span class="school-badge">🏛 SJTU · 2024</span>
+        </div>
+      </div>
+      <div class="ba-body">
+        <div class="ba-block before">
+          <div class="ba-section-label">Өмнө нь</div>
+          <p>Инженерийн чиглэлд суралцахыг хүсдэг байсан ч Монголд мэргэжлийн боловсрол хязгаарлагдмал мэт санагдаж байсан. Визний процесс, бичиг баримт гэдэг нь айдас болдог байсан.</p>
+        </div>
+        <div class="ba-block after">
+          <div class="ba-section-label">Одоо</div>
+          <p>SJTU-ийн Механик инженерийн тэнхимд сурч байна. Хятадын томоохон компаниудад ажиллах боломж нээгдэж байна.</p>
+        </div>
+        <div class="ba-stars">★★★★★</div>
+        <p class="ba-quote">"Процесс бүгдийг тодорхой, ойлгомжтой тайлбарлаж өгсөнд баярлалаа."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-content">
+    <div class="cta-badge">Байр хязгаартай</div>
+    <h2 class="cta-title">Өнөөдөр эхэл,<br/><em>маргааш хүр</em></h2>
+    <p class="cta-sub">Нэг зөвлөгөөнөөс их зүйл эхэлдэг.<br/>Үнэгүй 30 минутын уулзалт авна уу.</p>
+  </div>
+  <div class="cta-actions">
+    <a href="#contact" class="btn-primary" style="font-size:16px;padding:15px 36px">Үнэгүй зөвлөгөө авах →</a>
+    <span class="cta-note">Үнэгүй · 30 минут · Ямар ч үүрэг хариуцлагагүй</span>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-grid">
+    <div class="contact-info">
+      <span class="section-tag">Холбоо барих</span>
+      <h2 class="section-title">Нэг алхам<br/><em>хийгээрэй</em></h2>
+      <p class="section-sub">Асуулт байна уу? Бид таны хажууд. Ажлын өдрүүдэд 9:00–18:00 цагт холбогдоно уу.</p>
+      <div class="contact-detail">
+        <div class="contact-icon">📞</div>
+        <div class="contact-text">
+          <strong>Утас</strong>
+          <span>+976 9900 0000</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-icon">✉️</div>
+        <div class="contact-text">
+          <strong>И-мэйл</strong>
+          <span>hello@edupath.mn</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-icon">💬</div>
+        <div class="contact-text">
+          <strong>WeChat</strong>
+          <span>EduPath_Mongolia</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-icon">📍</div>
+        <div class="contact-text">
+          <strong>Хаяг</strong>
+          <span>Улаанбаатар хот, Сүхбаатар дүүрэг</span>
+        </div>
+      </div>
+      <div class="social-row">
+        <a href="#" class="social-btn">Facebook</a>
+        <a href="#" class="social-btn">Instagram</a>
+        <a href="#" class="social-btn">WeChat</a>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <h3>Зөвлөгөө захиалах</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Овог нэр</label>
+          <input type="text" placeholder="Батбаяр Дорж">
+        </div>
+        <div class="form-group">
+          <label>Утас</label>
+          <input type="tel" placeholder="+976 ····  ····">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>И-мэйл</label>
+        <input type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label>Сонирхсон үйлчилгээ</label>
+        <select>
+          <option value="">Сонгоно уу...</option>
+          <option>Их сургуулийн зуучлал</option>
+          <option>Mentorship хөтөлбөр</option>
+          <option>Эрчимт сургалт (7 хоног)</option>
+          <option>Эрчимт сургалт (28 хоног)</option>
+          <option>Бүгдийг мэдэхийг хүсч байна</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Мессеж (заавал биш)</label>
+        <textarea placeholder="Таны асуулт, хүсэлт..."></textarea>
+      </div>
+      <button class="form-submit">Илгээх →</button>
+      <p class="form-note">Ажлын 24 цагт холбогдоно. Мэдээллийг хуваалцахгүй.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Edu<span>Path</span></span>
+  <ul class="footer-links">
+    <li><a href="#services">Үйлчилгээ</a></li>
+    <li><a href="#how">Хэрхэн</a></li>
+    <li><a href="#schools">Сургуулиуд</a></li>
+    <li><a href="#contact">Холбоо</a></li>
+  </ul>
+  <span class="footer-copy">© 2024 EduPath Mongolia. Бүх эрх хуулиар хамгаалагдсан.</span>
+</footer>
+
+</body>
+</html>

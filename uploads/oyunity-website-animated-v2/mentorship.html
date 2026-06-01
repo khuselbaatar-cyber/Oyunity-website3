@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Менторшип — Oyunity</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      colors: {
+        oyunity: {
+          blue: "#29ABE2", "blue-dark": "#1B8FBF", "blue-soft": "#E5F4FB",
+          yellow: "#FFCB05", "yellow-soft": "#FFF5C2",
+          red: "#ED1C24", "red-soft": "#FDE3E5",
+          green: "#22B14C", "green-soft": "#DCF5E3",
+          navy: "#0B1B3B", soft: "#FAFAF8",
+        },
+        "border-primary": "#E5E7EB",
+      },
+      fontFamily: { serif: ['"DM Serif Display"', "Georgia", "serif"], sans: ['"Inter"', "system-ui", "sans-serif"] },
+    } },
+  };
+</script>
+<style>
+  html, body { font-family: 'Inter', system-ui, sans-serif; color: #0B1B3B; background: #FFFFFF; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; letter-spacing: -0.01em; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.625rem 1.5rem; border-radius: 4px; font-size: 0.95rem; font-weight: 500; line-height: 1.4; border: 1px solid; cursor: pointer; text-decoration: none; transition: background-color .2s, color .2s, border-color .2s, transform .15s; white-space: nowrap; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: #29ABE2; border-color: #29ABE2; color: #fff; }
+  .btn-primary:hover { background: #1B8FBF; border-color: #1B8FBF; color: #fff; }
+  .btn-secondary { background: transparent; border-color: #0B1B3B; color: #0B1B3B; }
+  .btn-secondary:hover { background: #0B1B3B; color: #fff; }
+  .btn-gold { background: #FFCB05; border-color: #FFCB05; color: #0B1B3B; }
+  .btn-gold:hover { background: #fff; border-color: #fff; color: #0B1B3B; }
+  .reveal { opacity: 0; transform: translateY(48px) scale(0.97); transition: opacity .85s cubic-bezier(.22,1,.36,1), transform .85s cubic-bezier(.22,1,.36,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  /* Cinematic */
+  .font-display { font-family: 'Instrument Serif', serif; font-weight: 400; }
+  .liquid-glass { background: rgba(255,255,255,0.06); backdrop-filter: blur(8px) saturate(1.2); -webkit-backdrop-filter: blur(8px) saturate(1.2); border: 1px solid rgba(255,255,255,0.15); transition: transform .3s ease, background .3s; }
+  .liquid-glass:hover { transform: scale(1.03); background: rgba(255,255,255,0.12); }
+  @keyframes fade-rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-rise { animation: fade-rise 0.9s cubic-bezier(.22,1,.36,1) both; }
+  .animate-fade-rise-delay { animation: fade-rise 0.9s cubic-bezier(.22,1,.36,1) .2s both; }
+  .animate-fade-rise-delay-2 { animation: fade-rise 0.9s cubic-bezier(.22,1,.36,1) .45s both; }
+</style>
+</head>
+<body class="bg-white text-oyunity-navy">
+
+<!-- ══ NAVBAR ══ -->
+<section class="sticky top-0 z-50 flex w-full items-center border-b border-border-primary bg-white/95 backdrop-blur lg:min-h-[72px] lg:px-[5%]">
+  <div class="mx-auto size-full lg:grid lg:grid-cols-[0.375fr_1fr_0.375fr] lg:items-center lg:justify-between lg:gap-4">
+    <div class="flex min-h-16 items-center justify-between px-[5%] md:min-h-[72px] lg:min-h-full lg:px-0">
+      <a href="Oyunity Landing Page v2.html" class="flex items-center gap-2"><img src="oyunity-logo.png" alt="Oyunity" class="h-10 w-auto"></a>
+      <button class="lg:hidden flex flex-col gap-1.5 -mr-2 p-2" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+        <span class="block h-0.5 w-6 bg-oyunity-navy"></span>
+        <span class="block h-0.5 w-6 bg-oyunity-navy"></span>
+        <span class="block h-0.5 w-6 bg-oyunity-navy"></span>
+      </button>
+    </div>
+    <div class="hidden lg:flex items-center justify-center gap-x-8">
+      <a href="Oyunity Landing Page v2.html" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Нүүр</a>
+      <div class="relative group">
+        <a href="Oyunity Landing Page v2.html#programs" class="text-sm font-medium hover:text-oyunity-blue-dark transition flex items-center gap-1">
+          Хөтөлбөрүүд
+          <svg width="14" height="14" viewBox="0 0 15 15" fill="currentColor"><path d="M3.13 6.36a.5.5 0 01.71 0L7.5 10l3.66-3.64a.5.5 0 11.7.7l-4 4a.5.5 0 01-.7 0l-4-4a.5.5 0 010-.7z"/></svg>
+        </a>
+        <div class="absolute left-0 top-full pt-2 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+          <div class="bg-white border border-border-primary shadow-lg p-2 rounded-md">
+            <a href="hsk.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Хэлний бэлтгэл</a>
+            <a href="bachelor.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Бакалавр / Магистр / Доктор</a>
+            <a href="exchange.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Солилцоо</a>
+            <a href="mentorship.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Менторшип</a>
+            <a href="online.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Онлайн HSK + CSCA</a>
+          </div>
+        </div>
+      </div>
+      <a href="Oyunity Landing Page v2.html#stories" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Амжилтын түүхүүд</a>
+      <a href="Oyunity Landing Page v2.html#mentors" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Менторууд</a>
+      <a href="Oyunity Landing Page v2.html#about" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Бидний тухай</a>
+    </div>
+    <div class="hidden lg:flex items-center justify-end">
+      <a href="contact.html" class="btn btn-primary">Зөвлөгөө захиалах</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CINEMATIC VIDEO HERO ══ -->
+<section class="relative w-full min-h-[85vh] overflow-hidden" style="background:#0B1B3B">
+  <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0">
+    <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4" type="video/mp4">
+  </video>
+  <!-- Brand blue tint overlay (so video reads as sky blue) -->
+  <div class="absolute inset-0 z-[1] pointer-events-none" style="background:linear-gradient(135deg,rgba(11,27,59,0.35) 0%,rgba(27,143,191,0.25) 50%,rgba(41,171,226,0.2) 100%)"></div>
+  <div class="absolute inset-0 z-[1] pointer-events-none" style="background:linear-gradient(to bottom,transparent 30%,rgba(11,27,59,0.55) 100%)"></div>
+
+  <div class="relative z-10 flex flex-col items-center text-center px-6 pt-28 md:pt-36 pb-24 md:pb-32">
+    <span class="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-xs font-semibold uppercase tracking-widest rounded-full backdrop-blur-sm animate-fade-rise" style="color:#FFCB05;border:1px solid rgba(255,203,5,0.4);background:rgba(255,203,5,0.08)">
+      <span class="w-1.5 h-1.5 rounded-full bg-oyunity-yellow"></span>
+      Standalone coaching
+    </span>
+    <h1 class="font-display text-white text-5xl sm:text-6xl md:text-7xl leading-[0.98] max-w-5xl animate-fade-rise" style="letter-spacing:-0.02em">
+      Менторшип
+    </h1>
+    <p class="text-white/75 text-lg md:text-xl max-w-2xl mt-8 leading-relaxed animate-fade-rise-delay">
+      Хятадын топ их сургуульд <span class="text-oyunity-yellow">1-on-1 alumni</span> mentor-той. Бид таны замыг хамтран зурна.
+    </p>
+    <div class="flex flex-wrap items-center justify-center gap-4 mt-10 animate-fade-rise-delay-2">
+      <a href="contact.html" class="liquid-glass rounded-full px-10 py-4 text-base text-white cursor-pointer font-medium">
+        Үнэгүй зөвлөгөө захиалах →
+      </a>
+      <a href="Oyunity Landing Page v2.html#programs" class="text-white/80 hover:text-white text-sm underline transition">Бусад хөтөлбөр</a>
+    </div>
+  </div>
+</section>
+<section class="px-[5%] py-16 md:py-20 bg-oyunity-soft">
+  <div class="container mx-auto max-w-4xl">
+    <div class="text-center mb-12 reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Багц</p>
+      <h2 class="text-3xl md:text-4xl text-oyunity-navy">Юу багтсан вэ?</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <div class="reveal flex items-start gap-3 p-5 bg-white border border-border-primary rounded-xl" style="transition-delay:0s">
+        <span class="text-oyunity-green text-xl font-bold leading-none">✓</span>
+        <span class="text-sm md:text-base text-oyunity-navy">Долоо хоног бүр 1-on-1 video session</span>
+      </div>
+      <div class="reveal flex items-start gap-3 p-5 bg-white border border-border-primary rounded-xl" style="transition-delay:0.05s">
+        <span class="text-oyunity-green text-xl font-bold leading-none">✓</span>
+        <span class="text-sm md:text-base text-oyunity-navy">Эссэ review болон feedback</span>
+      </div>
+      <div class="reveal flex items-start gap-3 p-5 bg-white border border-border-primary rounded-xl" style="transition-delay:0.1s">
+        <span class="text-oyunity-green text-xl font-bold leading-none">✓</span>
+        <span class="text-sm md:text-base text-oyunity-navy">Сургууль / мэргэжил сонголтын зөвлөгөө</span>
+      </div>
+      <div class="reveal flex items-start gap-3 p-5 bg-white border border-border-primary rounded-xl" style="transition-delay:0.15000000000000002s">
+        <span class="text-oyunity-green text-xl font-bold leading-none">✓</span>
+        <span class="text-sm md:text-base text-oyunity-navy">Application timeline plan</span>
+      </div>
+      <div class="reveal flex items-start gap-3 p-5 bg-white border border-border-primary rounded-xl" style="transition-delay:0s">
+        <span class="text-oyunity-green text-xl font-bold leading-none">✓</span>
+        <span class="text-sm md:text-base text-oyunity-navy">Тэтгэлгийн стратеги</span>
+      </div>
+      <div class="reveal flex items-start gap-3 p-5 bg-white border border-border-primary rounded-xl" style="transition-delay:0.05s">
+        <span class="text-oyunity-green text-xl font-bold leading-none">✓</span>
+        <span class="text-sm md:text-base text-oyunity-navy">HSK / IELTS бэлтгэлийн зөвлөгөө</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="px-[5%] py-16 md:py-20 bg-white">
+  <div class="container mx-auto max-w-3xl">
+    <div class="text-center mb-12 reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Процесс</p>
+      <h2 class="text-3xl md:text-4xl text-oyunity-navy">Зам зураг</h2>
+    </div>
+    <div class="space-y-6">
+      
+      <div class="reveal flex gap-5 md:gap-7 items-start" style="transition-delay:0s">
+        <div class="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-full bg-oyunity-blue text-white font-bold text-lg flex items-center justify-center font-sans">1</div>
+        <div class="flex-1 pt-1 md:pt-2">
+          <h3 class="text-lg md:text-xl mb-1 text-oyunity-navy">Mentor matching</h3>
+          <p class="text-gray-600 leading-relaxed">Зорилгод тань тохирох alumni mentor.</p>
+        </div>
+      </div>
+      <div class="reveal flex gap-5 md:gap-7 items-start" style="transition-delay:0.08s">
+        <div class="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-full bg-oyunity-blue text-white font-bold text-lg flex items-center justify-center font-sans">2</div>
+        <div class="flex-1 pt-1 md:pt-2">
+          <h3 class="text-lg md:text-xl mb-1 text-oyunity-navy">Weekly sessions</h3>
+          <p class="text-gray-600 leading-relaxed">Долоо хоног бүр 1 цагийн зөвлөгөө.</p>
+        </div>
+      </div>
+      <div class="reveal flex gap-5 md:gap-7 items-start" style="transition-delay:0.16s">
+        <div class="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-full bg-oyunity-blue text-white font-bold text-lg flex items-center justify-center font-sans">3</div>
+        <div class="flex-1 pt-1 md:pt-2">
+          <h3 class="text-lg md:text-xl mb-1 text-oyunity-navy">Application support</h3>
+          <p class="text-gray-600 leading-relaxed">Эссэ review, timeline, стратеги.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="px-[5%] py-16 md:py-20 bg-white">
+  <div class="container mx-auto max-w-2xl text-center reveal">
+    <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Үйлчилгээний хураамж</p>
+    <div class="font-serif text-5xl md:text-7xl text-oyunity-navy mb-3">2.5 сая ₮</div>
+    <p class="text-gray-600 leading-relaxed mb-2">Хугацаа: <span class="font-semibold text-oyunity-navy">Уян хатан</span></p>
+    <p class="text-sm text-gray-500 max-w-md mx-auto">Энэ үнэ нь Oyunity-ийн үйлчилгээний хураамж. Их сургуулийн сургалт, байрны төлбөрийг тэтгэлэг хамардаг.</p>
+  </div>
+</section>
+<section class="px-[5%] py-16 md:py-20 bg-oyunity-soft">
+  <div class="container mx-auto max-w-3xl">
+    <div class="text-center mb-10 reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">FAQ</p>
+      <h2 class="text-3xl md:text-4xl text-oyunity-navy">Энэ хөтөлбөрийн талаар</h2>
+    </div>
+    <div class="space-y-3">
+      
+      <details class="group border border-border-primary rounded-lg bg-white reveal" style="transition-delay:0s" open>
+        <summary class="cursor-pointer list-none flex justify-between items-center px-5 py-4 font-semibold text-oyunity-navy hover:bg-oyunity-soft transition">
+          <span class="font-sans">Хэдэн уулзалт орох вэ?</span>
+          <span class="text-oyunity-blue text-2xl leading-none group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <div class="px-5 pb-5 text-gray-600 leading-relaxed">Application циклд 12–20 уулзалт. Долоо хоног бүр 1 удаа, 1 цаг.</div>
+      </details>
+      <details class="group border border-border-primary rounded-lg bg-white reveal" style="transition-delay:0.05s">
+        <summary class="cursor-pointer list-none flex justify-between items-center px-5 py-4 font-semibold text-oyunity-navy hover:bg-oyunity-soft transition">
+          <span class="font-sans">Зөвлөгөөнөөс илүү тус болох уу?</span>
+          <span class="text-oyunity-blue text-2xl leading-none group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <div class="px-5 pb-5 text-gray-600 leading-relaxed">Энэ нь зөвхөн coaching — application-аа өөрөө хийнэ. Бид бичиж өгөхгүй, харин зөвөөр хийхэд туслана.</div>
+      </details>
+      <details class="group border border-border-primary rounded-lg bg-white reveal" style="transition-delay:0.1s">
+        <summary class="cursor-pointer list-none flex justify-between items-center px-5 py-4 font-semibold text-oyunity-navy hover:bg-oyunity-soft transition">
+          <span class="font-sans">Аль mentor-той ажиллах вэ?</span>
+          <span class="text-oyunity-blue text-2xl leading-none group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <div class="px-5 pb-5 text-gray-600 leading-relaxed">Зорилгын сургууль, мэргэжилд тохирох alumni-тай таарна. Жишээ нь Tsinghua барих гэж байгаа бол Tsinghua төгсөгч.</div>
+      </details>
+    </div>
+  </div>
+</section>
+<section class="px-[5%] py-16 md:py-24 bg-white">
+  <div class="container mx-auto max-w-5xl">
+    <div class="rounded-2xl bg-gradient-to-br from-oyunity-blue to-oyunity-blue-dark text-white p-10 md:p-16 text-center reveal">
+      <h2 class="text-3xl md:text-5xl text-white mb-4">Энэ замаар явахад бэлэн үү?</h2>
+      <p class="text-white/80 max-w-xl mx-auto mb-8">30 минутын үнэгүй зөвлөгөө. Зорилго, түвшин, тэтгэлгийн боломжуудаа судалъя.</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="contact.html" class="btn btn-gold">Зөвлөгөө захиалах →</a>
+        <a href="tel:80001928" class="btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:white">☎ 8000-1928</a>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ══ FOOTER ══ -->
+<footer class="bg-oyunity-soft border-t border-border-primary px-[5%] py-12 md:py-16">
+  <div class="container mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-10 pb-10">
+      <div>
+        <a href="Oyunity Landing Page v2.html" class="inline-block"><img src="oyunity-logo.png" alt="Oyunity" class="h-12 w-auto"></a>
+        <p class="mt-4 text-sm text-gray-600 leading-relaxed">Elite Scholarship Mentorship Ecosystem. Хятадын топ их сургуулиудад тэтгэлэгтэй элсэх premium consultancy.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm font-sans text-oyunity-navy mb-4">Хөтөлбөрүүд</h4>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li><a href="hsk.html" class="hover:text-oyunity-blue transition">Хэлний бэлтгэл</a></li>
+          <li><a href="bachelor.html" class="hover:text-oyunity-blue transition">Бакалавр / Магистр / Доктор</a></li>
+          <li><a href="exchange.html" class="hover:text-oyunity-blue transition">Солилцоо</a></li>
+          <li><a href="mentorship.html" class="hover:text-oyunity-blue transition">Менторшип</a></li>
+          <li><a href="online.html" class="hover:text-oyunity-blue transition">Онлайн HSK + CSCA</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm font-sans text-oyunity-navy mb-4">Холбоо барих</h4>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li><a href="tel:80001928" class="hover:text-oyunity-blue transition">8000-1928</a></li>
+          <li><a href="mailto:oyunityedu@gmail.com" class="hover:text-oyunity-blue transition">oyunityedu@gmail.com</a></li>
+          <li>10:00 – 20:00</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm font-sans text-oyunity-navy mb-4">Хурдан холбоо</h4>
+        <a href="contact.html" class="btn btn-primary w-full">Зөвлөгөө захиалах →</a>
+      </div>
+    </div>
+    <div class="border-t border-border-primary pt-6 text-xs text-gray-500 text-center">
+      © 2026 Oyunity. Бүх эрх хуулиар хамгаалагдсан.
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMobileMenu(){ /* TODO */ }
+  const io = new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')})},{threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+<!-- Oyunity scroll animation (auto-injected) -->
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function ready(fn){ document.readyState!=='loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
+  ready(function(){
+    try{
+      if(!reduce){
+        document.querySelectorAll('section').forEach(function(section){
+          if(section.id==='hero') return;
+          section.querySelectorAll('.grid').forEach(function(grid){
+            if(grid.closest('.reveal')) return;
+            var items = Array.prototype.filter.call(grid.children, function(c){return c.nodeType===1;});
+            if(items.length>1){
+              items.forEach(function(item,i){
+                if(!item.classList.contains('reveal')){
+                  item.classList.add('reveal');
+                  if(!item.style.transitionDelay) item.style.transitionDelay = Math.min(i*0.13,0.7)+'s';
+                }
+              });
+            }
+          });
+          var h = section.querySelector('h2');
+          if(h && !h.closest('.reveal')){
+            var block = h.parentElement;
+            if(block && block !== section && !block.classList.contains('reveal')) block.classList.add('reveal');
+          }
+        });
+      }
+    }catch(err){}
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+    if(!reduce){
+      var hero=document.getElementById('hero');
+      if(hero){
+        var h1=hero.querySelector('h1'); var content=h1?h1.parentElement:null;
+        var video=hero.querySelector('video, img'); var vh=window.innerHeight||800; var ticking=false;
+        function upd(){ var y=window.pageYOffset; if(y<=vh){ if(content){content.style.transform='translateY('+(y*0.5)+'px)';content.style.opacity=Math.max(0,1-y/(vh*0.6));} if(video){video.style.transform='scale('+(1+y/vh*0.2)+')';} } ticking=false; }
+        window.addEventListener('scroll',function(){ if(!ticking){requestAnimationFrame(upd);ticking=true;} },{passive:true});
+        window.addEventListener('resize',function(){vh=window.innerHeight;});
+      }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

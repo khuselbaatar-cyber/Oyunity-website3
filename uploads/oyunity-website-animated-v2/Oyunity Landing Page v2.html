@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oyunity — Хятадын топ их сургуулиудад тэтгэлэгтэй элсэх</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          oyunity: {
+            blue: "#29ABE2",
+            "blue-dark": "#1B8FBF",
+            "blue-soft": "#E5F4FB",
+            yellow: "#FFCB05",
+            "yellow-soft": "#FFF5C2",
+            red: "#ED1C24",
+            "red-soft": "#FDE3E5",
+            green: "#22B14C",
+            "green-soft": "#DCF5E3",
+            navy: "#0B1B3B",
+            soft: "#FAFAF8",
+            gold: "#FFCB05",
+            "gold-dark": "#C8A000",
+          },
+          "border-primary": "#E5E7EB",
+        },
+        fontFamily: {
+          serif: ['"DM Serif Display"', "Georgia", "serif"],
+          sans: ['"Inter"', "system-ui", "sans-serif"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html, body { font-family: 'Inter', system-ui, sans-serif; color: #0B1B3B; background: #FFFFFF; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; letter-spacing: -0.01em; }
+  /* Relume-style Button base */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0.625rem 1.5rem; border-radius: 4px;
+    font-size: 0.95rem; font-weight: 500; line-height: 1.4;
+    border: 1px solid; cursor: pointer; text-decoration: none;
+    transition: background-color .2s, color .2s, border-color .2s, transform .15s;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: #29ABE2; border-color: #29ABE2; color: #fff; }
+  .btn-primary:hover { background: #1B8FBF; border-color: #1B8FBF; color: #fff; }
+  .btn-secondary { background: transparent; border-color: #0B1B3B; color: #0B1B3B; }
+  .btn-secondary:hover { background: #0B1B3B; color: #fff; }
+  .btn-gold { background: #FFCB05; border-color: #FFCB05; color: #0B1B3B; }
+  .btn-gold:hover { background: #fff; border-color: #fff; color: #0B1B3B; }
+  .btn-blue-outline { background: transparent; border-color: #29ABE2; color: #29ABE2; }
+  .btn-blue-outline:hover { background: #29ABE2; color: #fff; }
+
+  /* fade reveal */
+  .reveal { opacity: 0; transform: translateY(48px) scale(0.97); transition: opacity .85s cubic-bezier(.22,1,.36,1), transform .85s cubic-bezier(.22,1,.36,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ══ CINEMATIC HERO ══ */
+  :root {
+    --cinematic-bg: hsl(201, 100%, 13%);
+    --cinematic-fg: hsl(0, 0%, 100%);
+    --cinematic-muted: hsl(240, 4%, 66%);
+  }
+  .font-display { font-family: 'Instrument Serif', serif; font-weight: 400; }
+  .text-cinematic-fg { color: var(--cinematic-fg); }
+  .text-cinematic-muted { color: var(--cinematic-muted); }
+  .bg-cinematic { background-color: var(--cinematic-bg); }
+
+  .liquid-glass {
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(8px) saturate(1.2);
+    -webkit-backdrop-filter: blur(8px) saturate(1.2);
+    border: none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s ease;
+  }
+  .liquid-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
+      rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+      rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  a.liquid-glass:hover, button.liquid-glass:hover { transform: scale(1.03); }
+
+  @keyframes fade-rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-rise { animation: fade-rise 0.9s cubic-bezier(.22,1,.36,1) both; }
+  .animate-fade-rise-delay { animation: fade-rise 0.9s cubic-bezier(.22,1,.36,1) .2s both; }
+  .animate-fade-rise-delay-2 { animation: fade-rise 0.9s cubic-bezier(.22,1,.36,1) .45s both; }
+  .animate-fade-rise-delay-3 { animation: fade-rise 0.9s cubic-bezier(.22,1,.36,1) .65s both; }
+
+  /* Sticky white nav appears on scroll past hero */
+  #stickyNav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-100%);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  #stickyNav.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+</style>
+</head>
+<body class="bg-white text-oyunity-navy">
+
+<!-- ══ STICKY NAV (appears on scroll past hero) ══ -->
+<section id="stickyNav" class="flex w-full items-center border-b border-border-primary bg-white/95 backdrop-blur lg:min-h-[72px] lg:px-[5%]">
+  <div class="mx-auto size-full lg:grid lg:grid-cols-[0.375fr_1fr_0.375fr] lg:items-center lg:justify-between lg:gap-4">
+    <div class="flex min-h-16 items-center justify-between px-[5%] md:min-h-[72px] lg:min-h-full lg:px-0">
+      <a href="#" class="flex items-center gap-2"><img src="oyunity-logo.png" alt="Oyunity" class="h-10 w-auto"></a>
+      <button class="lg:hidden flex flex-col gap-1.5 -mr-2 p-2" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+        <span class="block h-0.5 w-6 bg-oyunity-navy transition" id="ham1"></span>
+        <span class="block h-0.5 w-6 bg-oyunity-navy transition" id="ham2"></span>
+        <span class="block h-0.5 w-6 bg-oyunity-navy transition" id="ham3"></span>
+      </button>
+    </div>
+    <div class="hidden lg:flex items-center justify-center gap-x-8">
+      <a href="#hero" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Нүүр</a>
+      <div class="relative group">
+        <a href="#programs" class="text-sm font-medium hover:text-oyunity-blue-dark transition flex items-center gap-1">
+          Хөтөлбөрүүд
+          <svg width="14" height="14" viewBox="0 0 15 15" fill="currentColor"><path d="M3.13 6.36a.5.5 0 01.71 0L7.5 10l3.66-3.64a.5.5 0 11.7.7l-4 4a.5.5 0 01-.7 0l-4-4a.5.5 0 010-.7z"/></svg>
+        </a>
+        <div class="absolute left-0 top-full pt-2 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+          <div class="bg-white border border-border-primary shadow-lg p-2 rounded-md">
+            <a href="hsk.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Хэлний бэлтгэл</a>
+            <a href="bachelor.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Бакалавр / Магистр / Доктор</a>
+            <a href="exchange.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Солилцоо</a>
+            <a href="mentorship.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Менторшип</a>
+            <a href="online.html" class="block px-3 py-2 text-sm hover:bg-oyunity-blue-soft rounded transition">Онлайн HSK + CSCA</a>
+          </div>
+        </div>
+      </div>
+      <a href="#stories" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Амжилтын түүхүүд</a>
+      <a href="#mentors" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Менторууд</a>
+      <a href="#about" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Бидний тухай</a>
+      <a href="#blog" class="text-sm font-medium hover:text-oyunity-blue-dark transition">Мэдлэгийн төв</a>
+    </div>
+    <div class="hidden lg:flex items-center justify-end">
+      <a href="contact.html" class="btn btn-primary">Зөвлөгөө захиалах</a>
+    </div>
+    <div id="mobileMenu" class="hidden lg:hidden absolute top-16 left-0 right-0 bg-white border-b border-border-primary px-[5%] pb-6 shadow-lg">
+      <nav class="flex flex-col gap-1 pt-4">
+        <a href="#hero" class="py-2 font-medium">Нүүр</a>
+        <a href="#programs" class="py-2 font-medium">Хөтөлбөрүүд</a>
+        <a href="#stories" class="py-2 font-medium">Амжилтын түүхүүд</a>
+        <a href="#mentors" class="py-2 font-medium">Менторууд</a>
+        <a href="#about" class="py-2 font-medium">Бидний тухай</a>
+        <a href="#blog" class="py-2 font-medium">Мэдлэгийн төв</a>
+        <a href="contact.html" class="btn btn-primary w-full mt-4">Зөвлөгөө захиалах</a>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CINEMATIC VIDEO HERO ══ -->
+<section id="hero" class="relative w-full min-h-screen overflow-hidden bg-cinematic">
+  <!-- Background video -->
+  <video
+    autoplay loop muted playsinline
+    class="absolute inset-0 w-full h-full object-cover z-0"
+    poster=""
+  >
+    <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4" type="video/mp4">
+  </video>
+  <!-- Subtle gradient overlay at bottom for legibility of CTA / scroll cue -->
+  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/30"></div>
+
+  <!-- Glass navigation -->
+  <div class="relative z-10 flex flex-row justify-between items-center px-6 md:px-8 py-6 max-w-7xl mx-auto">
+    <a href="#" class="inline-flex items-center"><img src="oyunity-logo.png" alt="Oyunity" class="h-14 w-auto brightness-0 invert"></a>
+    <nav class="hidden md:flex items-center gap-x-8">
+      <a href="#hero" class="text-sm text-cinematic-fg transition-colors">Нүүр</a>
+      <a href="#programs" class="text-sm text-cinematic-muted hover:text-cinematic-fg transition-colors">Хөтөлбөрүүд</a>
+      <a href="#stories" class="text-sm text-cinematic-muted hover:text-cinematic-fg transition-colors">Амжилт</a>
+      <a href="#blog" class="text-sm text-cinematic-muted hover:text-cinematic-fg transition-colors">Журнал</a>
+      <a href="contact.html" class="text-sm text-cinematic-muted hover:text-cinematic-fg transition-colors">Холбоо барих</a>
+    </nav>
+    <a href="contact.html" class="liquid-glass rounded-full px-6 py-2.5 text-sm text-cinematic-fg">Зөвлөгөө захиалах</a>
+  </div>
+
+  <!-- Hero content -->
+  <div class="relative z-10 flex flex-col items-center text-center px-6 pt-20 md:pt-28 pb-32 md:pb-40">
+    <h1 class="font-display text-cinematic-fg text-5xl sm:text-7xl md:text-8xl leading-[0.95] max-w-7xl animate-fade-rise" style="letter-spacing:-0.02em;">
+      <em class="not-italic text-cinematic-muted">Хичээл зүтгэлээс</em> мөрөөдөл <em class="not-italic text-cinematic-muted">эхлэлтэй.</em>
+    </h1>
+    <p class="text-cinematic-muted text-base sm:text-lg max-w-2xl mt-8 leading-relaxed animate-fade-rise-delay">Бид мөрөөдлийг бодит болгодог-Oyunity</p>
+    <a href="contact.html" class="liquid-glass rounded-full px-14 py-5 text-base text-cinematic-fg mt-12 animate-fade-rise-delay-2 cursor-pointer">
+      Зөвлөгөө захиалах
+    </a>
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-cinematic-muted animate-fade-rise-delay-3">
+      <span><span class="text-oyunity-yellow">★</span> 4.9 рэйтинг</span>
+      <span class="opacity-40">/</span>
+      <span>300 амжилттай элсэлт</span>
+      <span class="opacity-40">/</span>
+      <span>45 партнер сургууль</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<section class="px-[5%] py-16 md:py-24 lg:py-28 bg-oyunity-soft">
+  <div class="container mx-auto">
+    <div class="grid grid-cols-1 gap-y-12 lg:grid-cols-[0.5fr_1fr] lg:items-center lg:gap-x-20">
+      <div class="reveal">
+        <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide md:mb-4">Үр дүн</p>
+        <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl lg:text-6xl text-oyunity-navy leading-tight">
+          7 жилийн туршид батлагдсан амжилт
+        </h2>
+        <p class="md:text-lg text-gray-600">
+          Бид бодит зүйл бүтээсэн. <strong>300 оюутан</strong> 45 их сургуульд байршуулагдсан.
+          <strong> 76.7%</strong> тэтгэлгийн хувь — энэ нь өөрөө л ярина.
+        </p>
+        <div class="mt-6 flex flex-wrap items-center gap-4 md:mt-8">
+          <a href="contact.html" class="btn btn-blue-outline">Өргөдөл гаргах</a>
+          <a href="#stories" class="inline-flex items-center gap-1 text-sm font-medium text-oyunity-navy hover:text-oyunity-blue-dark transition">
+            Дэлгэрэнгүй
+            <svg width="14" height="14" viewBox="0 0 15 15" fill="currentColor"><path d="M6.16 3.13a.5.5 0 01.7 0l4 4a.5.5 0 010 .7l-4 4a.5.5 0 01-.7-.7L9.79 7.5 6.16 3.86a.5.5 0 010-.73z"/></svg>
+          </a>
+        </div>
+      </div>
+      <!-- Bento stat cards -->
+      <div class="grid grid-cols-2 gap-4 w-full reveal">
+        <!-- 1 — cream, star -->
+        <div class="relative rounded-2xl p-5 sm:p-6 flex flex-col justify-between aspect-square border border-oyunity-blue/70 bg-white text-oyunity-navy text-left shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-oyunity-navy flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+              <polygon points="12,2 15.1,8.6 22,9.5 17,14.4 18.2,21.5 12,18 5.8,21.5 7,14.4 2,9.5 8.9,8.6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-3xl sm:text-4xl font-bold leading-none">76.7%</div>
+            <div class="mt-2 text-sm sm:text-base text-oyunity-navy/70">Тэтгэлгийн хувь</div>
+          </div>
+        </div>
+
+        <!-- 2 — dark navy, people -->
+        <div class="relative rounded-2xl p-5 sm:p-6 flex flex-col justify-between aspect-square border border-oyunity-blue/70 bg-oyunity-navy text-white text-left shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-oyunity-soft flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B1B3B" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+              <circle cx="9" cy="8" r="3.5"/>
+              <circle cx="17" cy="9" r="2.5"/>
+              <path d="M3 19c0-3.3 2.7-5 6-5s6 1.7 6 5"/>
+              <path d="M15 18c0-2.5 2-4 4-4s2.5 1.2 2.5 3.5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-3xl sm:text-4xl font-bold leading-none">300</div>
+            <div class="mt-2 text-sm sm:text-base text-white/70">Зуучилсан оюутан</div>
+          </div>
+        </div>
+
+        <!-- 3 — cream, check -->
+        <div class="relative rounded-2xl p-5 sm:p-6 flex flex-col justify-between aspect-square border border-oyunity-blue/70 bg-white text-oyunity-navy text-left shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-oyunity-navy flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
+              <rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/>
+              <path d="M8 12.5l2.8 2.8L16.5 9.5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-3xl sm:text-4xl font-bold leading-none">45</div>
+            <div class="mt-2 text-sm sm:text-base text-oyunity-navy/70">Партнер сургууль</div>
+          </div>
+        </div>
+
+        <!-- 4 — dark navy, graduation cap -->
+        <div class="relative rounded-2xl p-5 sm:p-6 flex flex-col justify-between aspect-square border border-oyunity-blue/70 bg-oyunity-navy text-white text-left shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-oyunity-soft flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B1B3B" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+              <path d="M2 9l10-4 10 4-10 4z"/>
+              <path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>
+              <path d="M22 9v5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-3xl sm:text-4xl font-bold leading-none">230</div>
+            <div class="mt-2 text-sm sm:text-base text-white/70">Тэтгэлэгтэй</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ COVER BENEFITS ══ -->
+<section class="px-[5%] py-16 md:py-24 bg-white">
+  <div class="container mx-auto">
+    <div class="mx-auto mb-12 w-full max-w-2xl text-center md:mb-16 reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Тэтгэлэг юу хамардаг вэ</p>
+      <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl lg:text-6xl text-oyunity-navy leading-tight">Манайхаас олгож буй тэтгэлэгүүд таны зардлыг хэрхэн бууруулдаг вэ</h2>
+      <p class="md:text-lg text-gray-600">
+        Доорх үнэ нь зөвхөн Oyunity-ийн үйлчилгээний хураамж — сургалт, байрны төлбөр тэтгэлгийн хамрагдана.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="reveal text-center p-8 rounded-2xl bg-white border border-border-primary hover:shadow-lg transition">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-oyunity-blue-soft text-oyunity-blue flex items-center justify-center mb-5">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>
+        </div>
+        <h3 class="text-xl font-bold text-oyunity-navy mb-2 font-serif">Байр үнэгүй</h3>
+        <p class="text-gray-600 leading-relaxed">Дотуур байрны төлбөрийг бүрэн тэтгэлэг хамардаг.</p>
+      </div>
+      <div class="reveal text-center p-8 rounded-2xl bg-white border border-border-primary hover:shadow-lg transition" style="transition-delay:.08s">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-oyunity-blue-soft text-oyunity-blue flex items-center justify-center mb-5">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4V4z"/><path d="M4 4v12a4 4 0 004 4"/></svg>
+        </div>
+        <h3 class="text-xl font-bold text-oyunity-navy mb-2 font-serif">Сургалт үнэгүй</h3>
+        <p class="text-gray-600 leading-relaxed">Сургалтын төлбөрийг бүрэн / хэсэгчлэн тэтгэлэг хамардаг.</p>
+      </div>
+      <div class="reveal text-center p-8 rounded-2xl bg-oyunity-green-soft border-2 border-oyunity-green hover:shadow-xl transition relative" style="transition-delay:.16s">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 bg-oyunity-green text-white text-xs font-bold uppercase tracking-wide rounded">Зэргийн хөтөлбөр</span>
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-white text-oyunity-green flex items-center justify-center mb-5">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 10c0-1.5 1.3-2 3-2s3 .5 3 2-1.3 2-3 2-3 .5-3 2 1.3 2 3 2 3-.5 3-2"/></svg>
+        </div>
+        <h3 class="text-xl font-bold text-oyunity-navy mb-2 font-serif">Сарын стипенд</h3>
+        <p class="text-gray-600 leading-relaxed">Зэргийн тэтгэлэг сар бүрийн амьжиргааны стипенд хүртэл олгодог.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ONLINE TRAINING ══ -->
+<section class="px-[5%] py-16 md:py-24 lg:py-28">
+  <div class="container mx-auto">
+    <div class="grid grid-cols-1 gap-y-12 md:grid-cols-2 md:items-center md:gap-x-12 lg:gap-x-20">
+      <div class="reveal">
+        <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide md:mb-4">Онлайн сургалт</p>
+        <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl lg:text-6xl text-oyunity-navy leading-tight">
+          Бага сурагчдад зориулсан онлайн Хятад хэлний сургалт
+        </h2>
+        <p class="mb-5 md:mb-6 md:text-lg text-gray-600">
+          Эрт эхэлж, давамгайлж эхлэе. Манай курс нь арван жилийн сурагчдыг
+          <strong> HSK болон CSCA</strong> шалгалтанд бэлддэг — батлагдсан, амжилттай аргаар.
+        </p>
+        <ul class="my-4 space-y-2">
+          <li class="flex items-start gap-2"><span class="text-oyunity-green font-bold">✓</span><span>HSK эхлэлээс ахисан түвшин хүртэлх бэлтгэл</span></li>
+          <li class="flex items-start gap-2"><span class="text-oyunity-green font-bold">✓</span><span>CSCA шалгалтын ёж сургалт өрсөлдөх давуу талын тулд</span></li>
+          <li class="flex items-start gap-2"><span class="text-oyunity-green font-bold">✓</span><span>Туршлагатай багш нараар Монгол хэлээр заана</span></li>
+          <li class="flex items-start gap-2"><span class="text-oyunity-green font-bold">✓</span><span>6-17 насны хүүхдэд зориулсан age-appropriate агуулга</span></li>
+        </ul>
+        <div class="mt-6 flex flex-wrap items-center gap-4 md:mt-8">
+          <a href="contact.html" class="btn btn-blue-outline">Бүртгүүлэх</a>
+          <a href="#programs" class="inline-flex items-center gap-1 text-sm font-medium text-oyunity-navy hover:text-oyunity-blue-dark transition">
+            Дэлгэрэнгүй
+            <svg width="14" height="14" viewBox="0 0 15 15" fill="currentColor"><path d="M6.16 3.13a.5.5 0 01.7 0l4 4a.5.5 0 010 .7l-4 4a.5.5 0 01-.7-.7L9.79 7.5 6.16 3.86a.5.5 0 010-.73z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="reveal bg-oyunity-blue-soft rounded-lg p-8 md:p-12">
+        <div class="aspect-square bg-white rounded-lg flex flex-col items-center justify-center text-gray-300 gap-3">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="4" width="18" height="14" rx="2"/>
+            <path d="M8 21h8M12 18v3"/>
+          </svg>
+          <span class="text-sm">[Зураг placeholder]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROGRAMS ══ -->
+<section id="programs" class="px-[5%] py-16 md:py-24 lg:py-28 bg-white">
+  <div class="container mx-auto">
+    <div class="mb-12 text-center md:mb-16 max-w-3xl mx-auto reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Бидний хөтөлбөрүүд</p>
+      <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl lg:text-6xl text-oyunity-navy leading-tight">
+        Таны түвшин, насанд тань тохирох 5 өөр зам.
+      </h2>
+      <p class="md:text-lg text-gray-600">
+        Бид зөвхөн "зуучлагч" биш. Mentor-уудтай хамт сурагчтай 1-5 жилийн турш дагалдана.
+        Манай тэтгэлэгүүд <strong class="text-oyunity-navy">байр, сургалтын төлбөрийг үнэгүй</strong> болгож, зэргийн хөтөлбөрт <strong class="text-oyunity-navy">сарын стипенд</strong> хүртэл олгодог.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <a href="hsk.html" class="group block p-7 md:p-8 rounded-2xl bg-gradient-to-br from-white to-oyunity-blue-soft border border-border-primary hover:border-oyunity-blue hover:shadow-xl transition-all reveal" style="transition-delay:0s">
+        <div class="w-16 h-16 rounded-2xl bg-oyunity-blue flex items-center justify-center mb-6 shadow-md">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="16" y="20" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="white">语</text>
+  <rect x="3" y="3" width="26" height="26" rx="3" stroke="white" stroke-width="1.5"/>
+</svg>
+        </div>
+        <h3 class="text-xl font-bold text-oyunity-navy mb-1 font-serif">Хэлний бэлтгэл</h3>
+        <p class="text-sm text-oyunity-blue font-semibold mb-4">HSK 0-ээс HSK 6 хүртэл</p>
+        <p class="text-gray-600 leading-relaxed mb-4">Хятад хэлгүй сурагчдад зориулсан тэтгэлэгтэй хэлний бэлтгэл. 50 оюутан энэ замаар амжилттай явсан.</p>
+        <div class="flex flex-wrap gap-1.5 mb-6">
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Байр үнэгүй</span>
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Сургалт үнэгүй</span>
+        </div>
+        <div class="border-t border-border-primary pt-4 flex justify-between items-center">
+          <span class="text-sm font-semibold text-oyunity-navy">6–12 сая ₮</span>
+          <span class="inline-flex items-center gap-1 text-sm text-oyunity-blue font-semibold group-hover:gap-2 transition-all">Дэлгэрэнгүй →</span>
+        </div>
+      </a>
+      <a href="bachelor.html" class="group block p-7 md:p-8 rounded-2xl bg-gradient-to-br from-white to-oyunity-blue-soft border border-border-primary hover:border-oyunity-blue hover:shadow-xl transition-all reveal relative" style="transition-delay:0.06s">
+        <span class="absolute -top-2.5 right-4 px-2.5 py-1 bg-oyunity-yellow text-oyunity-navy text-xs font-bold uppercase tracking-wide rounded">Хамгийн их сонгогддог</span>
+        <div class="w-16 h-16 rounded-2xl bg-oyunity-navy flex items-center justify-center mb-6 shadow-md">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M2 12l14-6 14 6-14 6z"/>
+  <path d="M8 14.5v6c0 2 4 4 8 4s8-2 8-4v-6"/>
+  <path d="M30 12v6"/>
+</svg>
+        </div>
+        <h3 class="text-xl font-bold text-oyunity-navy mb-1 font-serif">Бүрэн зэрэг</h3>
+        <p class="text-sm text-oyunity-blue font-semibold mb-4">Бакалавр · Магистр · Доктор</p>
+        <p class="text-gray-600 leading-relaxed mb-4">4–7 жилийн full degree placement. Манай 180+ оюутан тэтгэлэгтэй элссэн.</p>
+        <div class="flex flex-wrap gap-1.5 mb-6">
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Байр</span>
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Сургалт</span>
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Стипенд</span>
+        </div>
+        <div class="border-t border-border-primary pt-4 flex justify-between items-center">
+          <span class="text-sm font-semibold text-oyunity-navy">10–15 сая ₮</span>
+          <span class="inline-flex items-center gap-1 text-sm text-oyunity-blue font-semibold group-hover:gap-2 transition-all">Дэлгэрэнгүй →</span>
+        </div>
+      </a>
+      <a href="exchange.html" class="group block p-7 md:p-8 rounded-2xl bg-gradient-to-br from-white to-oyunity-blue-soft border border-border-primary hover:border-oyunity-blue hover:shadow-xl transition-all reveal" style="transition-delay:0.12s">
+        <div class="w-16 h-16 rounded-2xl bg-oyunity-blue-dark flex items-center justify-center mb-6 shadow-md">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M3 17l8-2 6-12 2 0 -2 11 9 -2 1 1 -8 5 -1 7 -2 0 -3 -6 -8 4 -2 -2z"/>
+</svg>
+        </div>
+        <h3 class="text-xl font-bold text-oyunity-navy mb-1 font-serif">Солилцоо</h3>
+        <p class="text-sm text-oyunity-blue font-semibold mb-4">1 сар · 1 семестр</p>
+        <p class="text-gray-600 leading-relaxed mb-4">Хятадад анх удаа очиж туршиж үзэх, эсвэл академик credit transfer хийх хөтөлбөр.</p>
+        <div class="flex flex-wrap gap-1.5 mb-6">
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ 1 сар / 1 семестр</span>
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Дотуур байр</span>
+        </div>
+        <div class="border-t border-border-primary pt-4 flex justify-between items-center">
+          <span class="text-sm font-semibold text-oyunity-navy">3–8 сая ₮</span>
+          <span class="inline-flex items-center gap-1 text-sm text-oyunity-blue font-semibold group-hover:gap-2 transition-all">Дэлгэрэнгүй →</span>
+        </div>
+      </a>
+      <a href="mentorship.html" class="group block p-7 md:p-8 rounded-2xl bg-gradient-to-br from-white to-oyunity-blue-soft border border-border-primary hover:border-oyunity-blue hover:shadow-xl transition-all reveal" style="transition-delay:0.18s">
+        <div class="w-16 h-16 rounded-2xl bg-oyunity-blue flex items-center justify-center mb-6 shadow-md">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <circle cx="16" cy="16" r="11"/>
+  <path d="M16 6v3M16 23v3M6 16h3M23 16h3"/>
+  <path d="M16 12l3 4-3 4-3-4z" fill="white"/>
+</svg>
+        </div>
+        <h3 class="text-xl font-bold text-oyunity-navy mb-1 font-serif">Менторшип</h3>
+        <p class="text-sm text-oyunity-blue font-semibold mb-4">Standalone coaching</p>
+        <p class="text-gray-600 leading-relaxed mb-4">Application-аа өөрөө хиймээр байгаа, гэхдээ туршлагатай alumni-аас зөвлөгөө авах оюутнуудад.</p>
+        <div class="flex flex-wrap gap-1.5 mb-6">
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Weekly 1-on-1</span>
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Эссэ review</span>
+        </div>
+        <div class="border-t border-border-primary pt-4 flex justify-between items-center">
+          <span class="text-sm font-semibold text-oyunity-navy">2.5 сая ₮</span>
+          <span class="inline-flex items-center gap-1 text-sm text-oyunity-blue font-semibold group-hover:gap-2 transition-all">Дэлгэрэнгүй →</span>
+        </div>
+      </a>
+      <a href="online.html" class="group block p-7 md:p-8 rounded-2xl bg-gradient-to-br from-white to-oyunity-blue-soft border border-border-primary hover:border-oyunity-blue hover:shadow-xl transition-all reveal" style="transition-delay:0.24s">
+        <div class="w-16 h-16 rounded-2xl bg-oyunity-navy flex items-center justify-center mb-6 shadow-md">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <rect x="5" y="6" width="22" height="15" rx="2"/>
+  <path d="M2 25h28"/>
+  <path d="M11 13l-2 2 2 2M21 13l2 2-2 2M17 11l-2 8"/>
+</svg>
+        </div>
+        <h3 class="text-xl font-bold text-oyunity-navy mb-1 font-serif">Цахим сургалт</h3>
+        <p class="text-sm text-oyunity-blue font-semibold mb-4">HSK + CSCA · 6–17 нас</p>
+        <p class="text-gray-600 leading-relaxed mb-4">Арван жилийн сурагчдыг HSK + CSCA-д бэлдэх онлайн сургалтын төв.</p>
+        <div class="flex flex-wrap gap-1.5 mb-6">
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Онлайн</span>
+          <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-oyunity-green-soft text-oyunity-green rounded-full">✓ Монгол хэлээр</span>
+        </div>
+        <div class="border-t border-border-primary pt-4 flex justify-between items-center">
+          <span class="text-sm font-semibold text-oyunity-navy">Удахгүй</span>
+          <span class="inline-flex items-center gap-1 text-sm text-oyunity-blue font-semibold group-hover:gap-2 transition-all">Дэлгэрэнгүй →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ PRICING TABLE ══ -->
+<section class="px-[5%] py-16 md:py-24 bg-white">
+  <div class="container mx-auto">
+    <div class="mx-auto mb-10 w-full max-w-2xl text-center reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Үнэлгээ</p>
+      <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl text-oyunity-navy leading-tight">Ил тод үнэлгээ</h2>
+      <p class="text-sm md:text-base text-gray-600">
+        Доорх үнэ нь Oyunity-ийн үйлчилгээний хураамж. Их сургуулийн сургалт, байрны төлбөрийг тэтгэлэг хамардаг.
+      </p>
+    </div>
+    <div class="overflow-x-auto reveal" style="transition-delay:.08s">
+      <table class="w-full border-collapse bg-white rounded-xl overflow-hidden border border-border-primary">
+        <thead class="bg-oyunity-navy text-white">
+          <tr>
+            <th class="text-left px-5 py-4 text-sm font-sans font-semibold">Хөтөлбөр</th>
+            <th class="text-left px-5 py-4 text-sm font-sans font-semibold">Тэтгэлэг хамрах</th>
+            <th class="text-left px-5 py-4 text-sm font-sans font-semibold">Хугацаа</th>
+            <th class="text-left px-5 py-4 text-sm font-sans font-semibold">Хураамж</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody class="text-sm">
+          <tr class="border-t border-border-primary hover:bg-oyunity-soft transition">
+            <td class="px-5 py-4"><span class="inline-flex items-center font-medium"><span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-oyunity-blue mr-2 align-middle"><svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="16" y="20" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="white">语</text>
+  <rect x="3" y="3" width="26" height="26" rx="3" stroke="white" stroke-width="1.5"/>
+</svg></span>Хэлний бэлтгэл</span></td>
+            <td class="px-5 py-4 text-oyunity-blue font-semibold">Байр · Сургалт үнэгүй</td>
+            <td class="px-5 py-4">6–24 сар</td>
+            <td class="px-5 py-4 font-bold text-oyunity-navy">6–12 сая ₮</td>
+            <td class="px-5 py-4"><a href="hsk.html" class="text-oyunity-blue font-semibold hover:text-oyunity-blue-dark">Дэлгэрэнгүй →</a></td>
+          </tr>
+          <tr class="border-t border-border-primary hover:bg-oyunity-soft transition bg-oyunity-yellow/5">
+            <td class="px-5 py-4"><span class="inline-flex items-center font-medium"><span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-oyunity-navy mr-2 align-middle"><svg width="16" height="16" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M2 12l14-6 14 6-14 6z"/>
+  <path d="M8 14.5v6c0 2 4 4 8 4s8-2 8-4v-6"/>
+  <path d="M30 12v6"/>
+</svg></span>Бакалавр / Магистр / Доктор</span></td>
+            <td class="px-5 py-4 text-oyunity-green font-semibold">Байр · Сургалт · Стипенд</td>
+            <td class="px-5 py-4">12–60 сар</td>
+            <td class="px-5 py-4 font-bold text-oyunity-navy">10–15 сая ₮</td>
+            <td class="px-5 py-4"><a href="bachelor.html" class="text-oyunity-blue font-semibold hover:text-oyunity-blue-dark">Дэлгэрэнгүй →</a></td>
+          </tr>
+          <tr class="border-t border-border-primary hover:bg-oyunity-soft transition">
+            <td class="px-5 py-4"><span class="inline-flex items-center font-medium"><span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-oyunity-blue-dark mr-2 align-middle"><svg width="16" height="16" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M3 17l8-2 6-12 2 0 -2 11 9 -2 1 1 -8 5 -1 7 -2 0 -3 -6 -8 4 -2 -2z"/>
+</svg></span>Солилцоо</span></td>
+            <td class="px-5 py-4 text-oyunity-blue font-semibold">Дотуур байр</td>
+            <td class="px-5 py-4">1–6 сар</td>
+            <td class="px-5 py-4 font-bold text-oyunity-navy">3–8 сая ₮</td>
+            <td class="px-5 py-4"><a href="exchange.html" class="text-oyunity-blue font-semibold hover:text-oyunity-blue-dark">Дэлгэрэнгүй →</a></td>
+          </tr>
+          <tr class="border-t border-border-primary hover:bg-oyunity-soft transition">
+            <td class="px-5 py-4"><span class="inline-flex items-center font-medium"><span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-oyunity-blue mr-2 align-middle"><svg width="16" height="16" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <circle cx="16" cy="16" r="11"/>
+  <path d="M16 6v3M16 23v3M6 16h3M23 16h3"/>
+  <path d="M16 12l3 4-3 4-3-4z" fill="white"/>
+</svg></span>Менторшип</span></td>
+            <td class="px-5 py-4 text-oyunity-blue font-semibold">Coaching</td>
+            <td class="px-5 py-4">Уян хатан</td>
+            <td class="px-5 py-4 font-bold text-oyunity-navy">2.5 сая ₮</td>
+            <td class="px-5 py-4"><a href="mentorship.html" class="text-oyunity-blue font-semibold hover:text-oyunity-blue-dark">Дэлгэрэнгүй →</a></td>
+          </tr>
+          <tr class="border-t border-border-primary hover:bg-oyunity-soft transition">
+            <td class="px-5 py-4"><span class="inline-flex items-center font-medium"><span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-oyunity-navy mr-2 align-middle"><svg width="16" height="16" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <rect x="5" y="6" width="22" height="15" rx="2"/>
+  <path d="M2 25h28"/>
+  <path d="M11 13l-2 2 2 2M21 13l2 2-2 2M17 11l-2 8"/>
+</svg></span>Цахим (HSK + CSCA)</span></td>
+            <td class="px-5 py-4 text-oyunity-blue font-semibold">Онлайн · 6–17 нас</td>
+            <td class="px-5 py-4">Курсээр</td>
+            <td class="px-5 py-4"><span class="inline-flex items-center gap-1 px-2 py-0.5 bg-oyunity-red-soft text-oyunity-red rounded text-xs font-semibold uppercase tracking-wide">● Удахгүй</span></td>
+            <td class="px-5 py-4"><a href="online.html" class="text-oyunity-blue font-semibold hover:text-oyunity-blue-dark">Дэлгэрэнгүй →</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CASE STUDIES ══ -->
+<section class="px-[5%] py-16 md:py-24 lg:py-28 bg-oyunity-soft">
+  <div class="container mx-auto">
+    <div class="mx-auto mb-12 w-full max-w-2xl text-center md:mb-16 reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Case Studies</p>
+      <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl lg:text-6xl text-oyunity-navy leading-tight">
+        Сурагч бүр өвөрмөц зам, ижил үр дүн.
+      </h2>
+    </div>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <!-- Амархүү -->
+      <a href="#stories" class="group block bg-white rounded-lg overflow-hidden border border-border-primary hover:shadow-xl transition-shadow reveal">
+        <div class="aspect-[4/3] overflow-hidden bg-oyunity-soft">
+          <img src="portrait-1.png" alt="Амархүү" class="w-full h-full object-cover" style="object-position: 50% 30%">
+        </div>
+        <div class="p-6">
+          <h3 class="text-2xl font-bold text-oyunity-navy mb-1">Амархүү</h3>
+          <p class="text-sm text-oyunity-blue font-semibold mb-4">Tsinghua University</p>
+          <div class="space-y-2 text-sm border-t border-border-primary pt-4">
+            <div class="flex justify-between"><span class="text-gray-500">Хөтөлбөр:</span><span class="text-oyunity-navy font-medium text-right">Хэлний бэлтгэл + Бакалавр</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Тэтгэлэг:</span><span class="inline-flex items-center gap-1 px-2 py-0.5 bg-oyunity-green-soft text-oyunity-green rounded text-xs font-semibold">✓ Full</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Зам:</span><span class="text-oyunity-navy font-medium">HSK 0 → HSK 6</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Хугацаа:</span><span class="text-oyunity-navy font-medium">2 жил</span></div>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-oyunity-blue group-hover:gap-2 transition-all">Дэлгэрэнгүй уншиx →</div>
+        </div>
+      </a>
+      <!-- Батболд -->
+      <a href="#stories" class="group block bg-white rounded-lg overflow-hidden border border-border-primary hover:shadow-xl transition-shadow reveal" style="transition-delay:.08s">
+        <div class="aspect-[4/3] overflow-hidden bg-oyunity-soft">
+          <img src="portrait-2.png" alt="Батболд" class="w-full h-full object-cover" style="object-position: 50% 25%">
+        </div>
+        <div class="p-6">
+          <h3 class="text-2xl font-bold text-oyunity-navy mb-1">Батболд</h3>
+          <p class="text-sm text-oyunity-blue font-semibold mb-4">Shanghai Jiao Tong</p>
+          <div class="space-y-2 text-sm border-t border-border-primary pt-4">
+            <div class="flex justify-between"><span class="text-gray-500">Хөтөлбөр:</span><span class="text-oyunity-navy font-medium text-right">Бакалавр</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Тэтгэлэг:</span><span class="inline-flex items-center gap-1 px-2 py-0.5 bg-oyunity-blue-soft text-oyunity-blue-dark rounded text-xs font-semibold">Partial</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Зам:</span><span class="text-oyunity-navy font-medium">HSK 3 → HSK 5</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Хугацаа:</span><span class="text-oyunity-navy font-medium">1 жил</span></div>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-oyunity-blue group-hover:gap-2 transition-all">Дэлгэрэнгүй уншиx →</div>
+        </div>
+      </a>
+      <!-- Анужин -->
+      <a href="#stories" class="group block bg-white rounded-lg overflow-hidden border border-border-primary hover:shadow-xl transition-shadow reveal" style="transition-delay:.16s">
+        <div class="aspect-[4/3] overflow-hidden bg-oyunity-soft">
+          <img src="portrait-4.png" alt="Анужин" class="w-full h-full object-cover" style="object-position: 50% 30%">
+        </div>
+        <div class="p-6">
+          <h3 class="text-2xl font-bold text-oyunity-navy mb-1">Анужин</h3>
+          <p class="text-sm text-oyunity-blue font-semibold mb-4">Fudan University</p>
+          <div class="space-y-2 text-sm border-t border-border-primary pt-4">
+            <div class="flex justify-between"><span class="text-gray-500">Хөтөлбөр:</span><span class="text-oyunity-navy font-medium text-right">English-medium Бакалавр</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Тэтгэлэг:</span><span class="inline-flex items-center gap-1 px-2 py-0.5 bg-oyunity-green-soft text-oyunity-green rounded text-xs font-semibold">✓ Тийм</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Зам:</span><span class="text-oyunity-navy font-medium">IELTS бэлтгэл → IELTS 7.0</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Хугацаа:</span><span class="text-oyunity-navy font-medium">6 сар</span></div>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-oyunity-blue group-hover:gap-2 transition-all">Дэлгэрэнгүй уншиx →</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIAL ══ -->
+<section id="stories" class="px-[5%] py-16 md:py-24 lg:py-28">
+  <div class="container mx-auto">
+    <div class="mx-auto mb-12 w-full max-w-2xl text-center md:mb-16 reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Амжилтын түүхүүд</p>
+      <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl lg:text-6xl text-oyunity-navy leading-tight">Хятадад очсон сурагчдын үг</h2>
+      <p class="md:text-lg text-gray-600">300 амжилтын түүхээс гурвыг танилцуулъя.</p>
+    </div>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <div class="reveal border border-border-primary p-6 md:p-8 rounded-lg flex flex-col bg-white hover:shadow-lg transition">
+        <div class="text-oyunity-blue text-4xl leading-none mb-4 font-serif">"</div>
+        <p class="text-gray-700 leading-relaxed mb-6 flex-1">HSK сурч үзээгүй намайг 2 жилийн дотор HSK 6-тай болгож, Tsinghua-д тэтгэлэгтэй элсүүлсэн. Энэ нь систематик ажлын үр дүн — санамсаргүй биш.</p>
+        <div class="border-t border-border-primary pt-4">
+          <p class="font-semibold text-oyunity-navy">Амархүү</p>
+          <p class="text-sm text-gray-500">Tsinghua University, Бакалавр (full scholarship)</p>
+        </div>
+      </div>
+      <div class="reveal border border-border-primary p-6 md:p-8 rounded-lg flex flex-col bg-white hover:shadow-lg transition" style="transition-delay:.08s">
+        <div class="text-oyunity-blue text-4xl leading-none mb-4 font-serif">"</div>
+        <p class="text-gray-700 leading-relaxed mb-6 flex-1">HSK 3 түвшингээс жил гаруйхан хугацаанд Shanghai Jiao Tong-д суудаг гэдгээ танихгүй байсан. Стратеги, mentor-той ажилласан нь бүх ялгааг гаргасан.</p>
+        <div class="border-t border-border-primary pt-4">
+          <p class="font-semibold text-oyunity-navy">Батболд</p>
+          <p class="text-sm text-gray-500">Shanghai Jiao Tong, Бакалавр (partial scholarship)</p>
+        </div>
+      </div>
+      <div class="reveal border border-border-primary p-6 md:p-8 rounded-lg flex flex-col bg-white hover:shadow-lg transition" style="transition-delay:.16s">
+        <div class="text-oyunity-blue text-4xl leading-none mb-4 font-serif">"</div>
+        <p class="text-gray-700 leading-relaxed mb-6 flex-1">Хятад хэлгүйгээр Хятадын топ сургуульд элсэх боломжтой гэдгийг хэн ч хэлдэггүй байсан. Fudan-ийн English-medium program бол яг тэр гарц байсан.</p>
+        <div class="border-t border-border-primary pt-4">
+          <p class="font-semibold text-oyunity-navy">Анужин</p>
+          <p class="text-sm text-gray-500">Fudan University, English program</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="px-[5%] py-16 md:py-24 lg:py-28">
+  <div class="container mx-auto max-w-3xl">
+    <div class="mb-12 text-center md:mb-16 reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">FAQ</p>
+      <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl lg:text-6xl text-oyunity-navy leading-tight">Түгээмэл асуултууд</h2>
+      <p class="md:text-lg text-gray-600">Манай хөтөлбөр, процесс, тэтгэлгийн талаар хамгийн их асуудаг асуултууд.</p>
+    </div>
+    <div class="space-y-3" id="faqList">
+      <div class="faq-item border border-border-primary rounded-lg overflow-hidden bg-white reveal">
+        <button class="faq-btn w-full flex justify-between items-center text-left px-5 md:px-6 py-4 md:py-5 hover:bg-oyunity-soft transition">
+          <span class="font-semibold text-oyunity-navy text-base md:text-lg font-sans">Хятад хэлгүй сурагч элсэж чадах уу?</span>
+          <svg class="faq-icon size-6 shrink-0 text-oyunity-blue transition-transform duration-300" viewBox="0 0 15 15" fill="currentColor"><path d="M8 2.75a.75.75 0 00-1.5 0v3.75H2.75a.75.75 0 000 1.5H6.5v3.75a.75.75 0 001.5 0V8h3.75a.75.75 0 000-1.5H8V2.75z"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 md:px-6 pb-5 md:pb-6 text-gray-600 leading-relaxed">
+          Тийм. Манай Хэлний бэлтгэл хөтөлбөр HSK 0-ээс HSK 4–6 хүртэл 1–2 жилд хүргэдэг. Жишээ нь Амархүү HSK ороогүй явсан, 2 жилийн дотор Tsinghua-д тэтгэлэгтэй элссэн.
+        </div>
+      </div>
+      <div class="faq-item border border-border-primary rounded-lg overflow-hidden bg-white reveal">
+        <button class="faq-btn w-full flex justify-between items-center text-left px-5 md:px-6 py-4 md:py-5 hover:bg-oyunity-soft transition">
+          <span class="font-semibold text-oyunity-navy text-base md:text-lg font-sans">Тэтгэлэг юу хамардаг вэ?</span>
+          <svg class="faq-icon size-6 shrink-0 text-oyunity-blue transition-transform duration-300" viewBox="0 0 15 15" fill="currentColor"><path d="M8 2.75a.75.75 0 00-1.5 0v3.75H2.75a.75.75 0 000 1.5H6.5v3.75a.75.75 0 001.5 0V8h3.75a.75.75 0 000-1.5H8V2.75z"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 md:px-6 pb-5 md:pb-6 text-gray-600 leading-relaxed">
+          Хэлний бэлтгэл болон зэргийн хөтөлбөрт байр, сургалтын төлбөрийг тэтгэлэг хамардаг. Зэргийн хөтөлбөрт сарын стипенд хүртэл олгодог. Манай 76.7% оюутан тэтгэлэгтэй элсдэг.
+        </div>
+      </div>
+      <div class="faq-item border border-border-primary rounded-lg overflow-hidden bg-white reveal">
+        <button class="faq-btn w-full flex justify-between items-center text-left px-5 md:px-6 py-4 md:py-5 hover:bg-oyunity-soft transition">
+          <span class="font-semibold text-oyunity-navy text-base md:text-lg font-sans">Үнэ нь хэдэн төгрөгөөс эхэлдэг вэ?</span>
+          <svg class="faq-icon size-6 shrink-0 text-oyunity-blue transition-transform duration-300" viewBox="0 0 15 15" fill="currentColor"><path d="M8 2.75a.75.75 0 00-1.5 0v3.75H2.75a.75.75 0 000 1.5H6.5v3.75a.75.75 0 001.5 0V8h3.75a.75.75 0 000-1.5H8V2.75z"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 md:px-6 pb-5 md:pb-6 text-gray-600 leading-relaxed">
+          Хамгийн боломжтой нь Менторшип хөтөлбөр (2.5 сая ₮). Бүрэн зэрэгтэй placement нь 10–15 сая ₮. Энэ нь Oyunity-ийн үйлчилгээний хураамж — их сургуулийн сургалт, байрыг тэтгэлэг хамардаг.
+        </div>
+      </div>
+      <div class="faq-item border border-border-primary rounded-lg overflow-hidden bg-white reveal">
+        <button class="faq-btn w-full flex justify-between items-center text-left px-5 md:px-6 py-4 md:py-5 hover:bg-oyunity-soft transition">
+          <span class="font-semibold text-oyunity-navy text-base md:text-lg font-sans">Ямар сургуулиудтай хамтран ажилладаг вэ?</span>
+          <svg class="faq-icon size-6 shrink-0 text-oyunity-blue transition-transform duration-300" viewBox="0 0 15 15" fill="currentColor"><path d="M8 2.75a.75.75 0 00-1.5 0v3.75H2.75a.75.75 0 000 1.5H6.5v3.75a.75.75 0 001.5 0V8h3.75a.75.75 0 000-1.5H8V2.75z"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 md:px-6 pb-5 md:pb-6 text-gray-600 leading-relaxed">
+          45 шууд партнертай. Үндсэн нь: Tsinghua, Fudan, Shanghai Jiao Tong, Xi'an Jiaotong, Sichuan, Beijing Institute of Technology, Shanghai University, Beijing Language and Culture, Chongqing, Wuhan University of Technology, Harbin Engineering зэрэг.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ══ MENTORS ══ -->
+<section id="mentors" class="px-[5%] py-16 md:py-24 bg-white">
+  <div class="container mx-auto">
+    <div class="mx-auto mb-12 w-full max-w-2xl text-center reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Бидний баг</p>
+      <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl text-oyunity-navy leading-tight">Бид зүгээр зуучлагч биш — бид төгсөгчид.</h2>
+      <p class="md:text-lg text-gray-600">Манай менторууд нь өөрсдөө Хятадын топ сургуулиудад элсэж, суралцаж, төгссөн Монгол оюутнууд.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+      <!-- Real mentor: Азжаргал -->
+      <div class="reveal bg-white border border-border-primary rounded-xl overflow-hidden hover:shadow-xl transition">
+        <div class="aspect-[4/5] overflow-hidden"><img src="portrait-3.png" alt="Бадмаа" class="w-full h-full object-cover" style="object-position: 50% 25%"></div>
+        <div class="p-5">
+          <h3 class="text-lg font-bold text-oyunity-navy mb-1 font-serif">Бадмаа</h3>
+          <p class="text-sm text-oyunity-blue font-semibold">Peking University</p>
+          <p class="text-xs text-gray-500 mt-1 mb-3">Гадаад харилцаагаар суралцаж төгссөн оюутан</p>
+          <p class="text-sm text-gray-600 leading-relaxed">Peking University-д элсэхийн тулд HSK + эссэ + scholarship стратегиа нэгэн зэрэг боловсруулсан.</p>
+        </div>
+      </div>
+      <!-- Coming Soon placeholders -->
+      <div class="reveal bg-white border border-border-primary rounded-xl overflow-hidden relative" style="transition-delay:.08s">
+        <span class="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 bg-oyunity-yellow text-oyunity-navy text-[10px] font-bold uppercase tracking-wider rounded-full">● Удахгүй</span>
+        <div class="aspect-[4/5] bg-gradient-to-br from-oyunity-blue-soft to-white flex flex-col items-center justify-center gap-3 p-6">
+          <div class="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29ABE2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          </div>
+          <p class="text-xs text-gray-500 text-center leading-relaxed">Шинэ Mentor<br/>бүртгәл явагдаж байна</p>
+        </div>
+        <div class="p-5">
+          <h3 class="text-lg font-bold text-oyunity-navy mb-1 font-serif">Tsinghua University</h3>
+          <p class="text-sm text-oyunity-blue font-semibold">Full scholarship alumna</p>
+          <p class="text-xs text-gray-500 mt-1">Inженеринг · 3-р курс</p>
+        </div>
+      </div>
+      <div class="reveal bg-white border border-border-primary rounded-xl overflow-hidden relative" style="transition-delay:.16s">
+        <span class="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 bg-oyunity-yellow text-oyunity-navy text-[10px] font-bold uppercase tracking-wider rounded-full">● Удахгүй</span>
+        <div class="aspect-[4/5] bg-gradient-to-br from-oyunity-yellow-soft to-white flex flex-col items-center justify-center gap-3 p-6">
+          <div class="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29ABE2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          </div>
+          <p class="text-xs text-gray-500 text-center leading-relaxed">Шинэ Mentor<br/>бүртгәл явагдаж байна</p>
+        </div>
+        <div class="p-5">
+          <h3 class="text-lg font-bold text-oyunity-navy mb-1 font-serif">Fudan University</h3>
+          <p class="text-sm text-oyunity-blue font-semibold">CSC scholarship alumna</p>
+          <p class="text-xs text-gray-500 mt-1">Бизнес · Төгсөгч</p>
+        </div>
+      </div>
+      <div class="reveal bg-white border border-border-primary rounded-xl overflow-hidden relative" style="transition-delay:.24s">
+        <span class="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 bg-oyunity-yellow text-oyunity-navy text-[10px] font-bold uppercase tracking-wider rounded-full">● Удахгүй</span>
+        <div class="aspect-[4/5] bg-gradient-to-br from-oyunity-blue-soft to-white flex flex-col items-center justify-center gap-3 p-6">
+          <div class="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29ABE2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          </div>
+          <p class="text-xs text-gray-500 text-center leading-relaxed">Шинэ Mentor<br/>бүртгәл явагдаж байна</p>
+        </div>
+        <div class="p-5">
+          <h3 class="text-lg font-bold text-oyunity-navy mb-1 font-serif">Shanghai Jiao Tong</h3>
+          <p class="text-sm text-oyunity-blue font-semibold">Partial scholarship alumna</p>
+          <p class="text-xs text-gray-500 mt-1">Механик · 2-р курс</p>
+        </div>
+      </div>
+    </div>
+    <p class="text-center text-sm text-gray-500 mt-8 reveal">
+      Манай alumni-ийн нэг бол?
+      <a href="mailto:oyunityedu@gmail.com" class="text-oyunity-blue font-semibold hover:text-oyunity-blue-dark">Mentor болох →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ══ TIMELINE — 7 жилийн зам ══ -->
+<section id="about" class="px-[5%] py-16 md:py-24 bg-oyunity-soft">
+  <div class="container mx-auto max-w-4xl">
+    <div class="text-center mb-14 md:mb-16 reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Бидний түүх</p>
+      <h2 class="mb-5 text-3xl font-bold md:mb-6 md:text-5xl lg:text-6xl text-oyunity-navy leading-tight">7 жилийн хугацаанд</h2>
+      <p class="md:text-lg text-gray-600">5 оюутнаас эхэлсэн зам, өнөөдөр 300 оюутны амжилт болсон.</p>
+    </div>
+    <div class="space-y-6">
+      <div class="reveal grid grid-cols-[100px_1fr] md:grid-cols-[140px_1fr] gap-6 md:gap-8">
+        <div class="text-oyunity-blue font-bold text-base md:text-lg font-sans">2018–2019</div>
+        <div class="border-l-2 border-oyunity-blue/30 pl-5 md:pl-7 pb-4">
+          <h3 class="text-lg md:text-xl text-oyunity-navy mb-1 font-serif">Үүсгэн байгуулагдсан</h3>
+          <p class="text-gray-600">Эхний 5 оюутан Хятад руу амжилттай элсүүлсэн.</p>
+        </div>
+      </div>
+      <div class="reveal grid grid-cols-[100px_1fr] md:grid-cols-[140px_1fr] gap-6 md:gap-8" style="transition-delay:.08s">
+        <div class="text-oyunity-blue font-bold text-base md:text-lg font-sans">2020</div>
+        <div class="border-l-2 border-oyunity-blue/30 pl-5 md:pl-7 pb-4">
+          <h3 class="text-lg md:text-xl text-oyunity-navy mb-1 font-serif">50 дахь оюутан</h3>
+          <p class="text-gray-600">Зуучлалын стандартыг шинэ түвшинд гаргасан.</p>
+        </div>
+      </div>
+      <div class="reveal grid grid-cols-[100px_1fr] md:grid-cols-[140px_1fr] gap-6 md:gap-8" style="transition-delay:.16s">
+        <div class="text-oyunity-blue font-bold text-base md:text-lg font-sans">2022</div>
+        <div class="border-l-2 border-oyunity-blue/30 pl-5 md:pl-7 pb-4">
+          <h3 class="text-lg md:text-xl text-oyunity-navy mb-1 font-serif">150 дахь оюутан</h3>
+          <p class="text-gray-600">Бээжин хотод төлөөлөгчийн оффис нээгдсэн.</p>
+        </div>
+      </div>
+      <div class="reveal grid grid-cols-[100px_1fr] md:grid-cols-[140px_1fr] gap-6 md:gap-8" style="transition-delay:.24s">
+        <div class="text-oyunity-blue font-bold text-base md:text-lg font-sans">2024</div>
+        <div class="border-l-2 border-oyunity-blue/30 pl-5 md:pl-7 pb-4">
+          <h3 class="text-lg md:text-xl text-oyunity-navy mb-1 font-serif">250 дахь оюутан</h3>
+          <p class="text-gray-600">20+ partner университетийн босгод хүрсэн.</p>
+        </div>
+      </div>
+      <div class="reveal grid grid-cols-[100px_1fr] md:grid-cols-[140px_1fr] gap-6 md:gap-8" style="transition-delay:.32s">
+        <div class="text-oyunity-blue font-bold text-base md:text-lg font-sans">2026</div>
+        <div class="border-l-2 border-oyunity-blue pl-5 md:pl-7 relative">
+          <span class="absolute -left-2 top-1 w-3 h-3 rounded-full bg-oyunity-yellow border-2 border-white"></span>
+          <h3 class="text-lg md:text-xl text-oyunity-navy mb-1 font-serif">300 дахь оюутан</h3>
+          <p class="text-gray-600">45 partner университет. Elite positioning гаргасан.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ NEWSLETTER ══ -->
+<section id="blog" class="px-[5%] py-16 md:py-20 bg-white">
+  <div class="container mx-auto max-w-2xl">
+    <div class="rounded-2xl border border-border-primary bg-oyunity-soft p-8 md:p-12 text-center reveal">
+      <p class="mb-3 text-sm font-semibold text-oyunity-blue uppercase tracking-wide">Resources</p>
+      <h2 class="mb-4 text-2xl font-bold md:text-4xl text-oyunity-navy leading-tight">Долоо хоног бүр Хятад элсэлтийн tip-үүд.</h2>
+      <p class="text-gray-600 mb-6">1500+ эцэг эх, сурагч долоо хоног бүр бидний newsletter авдаг.</p>
+      <form class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto" onsubmit="event.preventDefault();this.innerHTML='<div class=\'text-oyunity-green font-semibold py-2\'>✓ Баярлалаа! Удахгүй мэйл явуулна.</div>'">
+        <input type="email" required placeholder="Таны и-мэйл" class="flex-1 px-4 py-3 rounded-lg border border-border-primary bg-white text-sm focus:outline-none focus:border-oyunity-blue">
+        <button type="submit" class="btn btn-primary">Бүртгүүлэх</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA — embedded contact form ══ -->
+<section id="cta" class="bg-oyunity-soft">
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] min-h-[80vh]">
+
+    <!-- LEFT — story panel -->
+    <aside class="relative overflow-hidden p-8 md:p-12 lg:p-16 text-white flex flex-col justify-between" style="background:linear-gradient(135deg,#0B1B3B 0%,#1B8FBF 60%,#29ABE2 100%)">
+      <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(255,203,5,0.22) 0%,transparent 70%)"></div>
+      <div class="absolute -bottom-40 -left-40 w-[28rem] h-[28rem] rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(41,171,226,0.18) 0%,transparent 70%)"></div>
+
+      <div class="relative z-10">
+        <span class="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-oyunity-yellow border border-oyunity-yellow/45 rounded-full bg-oyunity-yellow/10 mb-6">
+          Discovery Call · Үнэгүй
+        </span>
+        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.1] text-white mb-5">
+          30 минут.<br/>
+          <span class="text-oyunity-yellow">Хятад руугаа замаа</span><br/>
+          тодорхой болго.
+        </h2>
+        <p class="text-base md:text-lg text-white/80 leading-relaxed max-w-md mb-10">
+          Discovery Call дээр бид зөвхөн сонсоно — таны зорилго, түвшин, цаг хугацаа, төсөв.
+          Эцэст нь зөв дараагийн алхамаа санал болгоно. Худалдан авах үүрэг үгүй.
+        </p>
+
+        <div class="grid grid-cols-3 gap-4 py-6 border-t border-b border-white/15">
+          <div>
+            <div class="font-serif text-3xl md:text-4xl text-oyunity-yellow leading-none">300</div>
+            <div class="text-xs text-white/70 mt-2 leading-tight">Амжилттай оюутан</div>
+          </div>
+          <div>
+            <div class="font-serif text-3xl md:text-4xl text-oyunity-yellow leading-none">76.7%</div>
+            <div class="text-xs text-white/70 mt-2 leading-tight">Тэтгэлэгтэй элсэлт</div>
+          </div>
+          <div>
+            <div class="font-serif text-3xl md:text-4xl text-oyunity-yellow leading-none">45</div>
+            <div class="text-xs text-white/70 mt-2 leading-tight">Партнер сургууль</div>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <h3 class="text-xs font-sans font-semibold uppercase tracking-wider text-oyunity-yellow mb-4">Юу авах вэ?</h3>
+          <ul class="flex flex-col gap-3.5">
+            <li class="flex items-start gap-3 text-sm md:text-base text-white/90 leading-snug">
+              <span class="w-5 h-5 flex-shrink-0 rounded-full flex items-center justify-center mt-0.5" style="background:rgba(34,177,76,0.28);color:#6FE38C;font-weight:700;font-size:12px">✓</span>
+              <span>Танай түвшинд тохирох <strong class="text-white">хувийн roadmap</strong></span>
+            </li>
+            <li class="flex items-start gap-3 text-sm md:text-base text-white/90 leading-snug">
+              <span class="w-5 h-5 flex-shrink-0 rounded-full flex items-center justify-center mt-0.5" style="background:rgba(34,177,76,0.28);color:#6FE38C;font-weight:700;font-size:12px">✓</span>
+              <span>Тэтгэлэг авах <strong class="text-white">стратегийн зөвлөгөө</strong> (CSC, Confucius, university scholarship)</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm md:text-base text-white/90 leading-snug">
+              <span class="w-5 h-5 flex-shrink-0 rounded-full flex items-center justify-center mt-0.5" style="background:rgba(34,177,76,0.28);color:#6FE38C;font-weight:700;font-size:12px">✓</span>
+              <span>Сургууль / мэргэжил сонголтын <strong class="text-white">shortlist</strong></span>
+            </li>
+            <li class="flex items-start gap-3 text-sm md:text-base text-white/90 leading-snug">
+              <span class="w-5 h-5 flex-shrink-0 rounded-full flex items-center justify-center mt-0.5" style="background:rgba(34,177,76,0.28);color:#6FE38C;font-weight:700;font-size:12px">✓</span>
+              <span>Танай түвшинд тохирох <strong class="text-white">хөтөлбөрийн санал</strong></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="relative z-10 mt-10 pt-6 text-xs text-white/60">
+        <strong class="text-white/85">🔒 Хувийн мэдээллийг хамгаална.</strong>
+        Та илгээсэн мэдээлэл зөвхөн Discovery Call-д ашиглагдана.
+      </div>
+    </aside>
+
+    <!-- RIGHT — form panel -->
+    <div class="bg-oyunity-soft p-8 md:p-12 lg:p-16 flex items-center justify-center">
+      <div class="w-full max-w-lg">
+
+        <div class="flex items-center gap-1.5 mb-3">
+          <div class="flex-1 h-1 rounded bg-oyunity-blue"></div>
+          <div class="flex-1 h-1 rounded bg-oyunity-blue"></div>
+          <div class="flex-1 h-1 rounded bg-oyunity-blue"></div>
+        </div>
+        <p class="text-xs text-gray-500 mb-7">3 минутын маягт · 5 талбар</p>
+
+        <div class="mb-7">
+          <h3 class="font-serif text-3xl md:text-4xl text-oyunity-navy mb-2">Захиалгаа илгээгээрэй</h3>
+          <p class="text-gray-500">Манай баг <strong class="text-oyunity-navy">24 цагийн дотор</strong> тантай холбоо барина.</p>
+        </div>
+
+        <form id="ctaForm" class="bg-white border border-border-primary rounded-2xl p-6 md:p-8 shadow-sm">
+          <div class="mb-5">
+            <label class="flex justify-between text-xs font-semibold text-oyunity-navy mb-2">Нэр <span class="text-oyunity-blue">*</span></label>
+            <input type="text" required placeholder="Жишээ нь: Болормаа" class="w-full px-4 py-3 text-[15px] border-[1.5px] border-border-primary rounded-lg focus:outline-none focus:border-oyunity-blue focus:ring-4 focus:ring-oyunity-blue/15 transition">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            <div>
+              <label class="flex justify-between text-xs font-semibold text-oyunity-navy mb-2">Утас <span class="text-oyunity-blue">*</span></label>
+              <input type="tel" required placeholder="9911-2233" class="w-full px-4 py-3 text-[15px] border-[1.5px] border-border-primary rounded-lg focus:outline-none focus:border-oyunity-blue focus:ring-4 focus:ring-oyunity-blue/15 transition">
+            </div>
+            <div>
+              <label class="flex justify-between text-xs font-semibold text-oyunity-navy mb-2">И-мэйл <span class="text-oyunity-blue">*</span></label>
+              <input type="email" required placeholder="name@gmail.com" class="w-full px-4 py-3 text-[15px] border-[1.5px] border-border-primary rounded-lg focus:outline-none focus:border-oyunity-blue focus:ring-4 focus:ring-oyunity-blue/15 transition">
+            </div>
+          </div>
+
+          <div class="mb-5">
+            <label class="flex justify-between text-xs font-semibold text-oyunity-navy mb-2">Анги / Курс <span class="text-oyunity-blue">*</span></label>
+            <select required class="w-full px-4 py-3 text-[15px] border-[1.5px] border-border-primary rounded-lg bg-white focus:outline-none focus:border-oyunity-blue focus:ring-4 focus:ring-oyunity-blue/15 transition appearance-none" style="background-image:url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3e%3cpath d='m6 9 6 6 6-6'/%3e%3c/svg%3e&quot;);background-repeat:no-repeat;background-position:right 14px center;background-size:18px;padding-right:42px">
+              <option value="">Сонгоно уу...</option>
+              <optgroup label="Ахлах сургууль">
+                <option>9-р анги</option>
+                <option>10-р анги</option>
+                <option>11-р анги</option>
+                <option>12-р анги</option>
+              </optgroup>
+              <optgroup label="Их сургууль">
+                <option>1-р курс</option>
+                <option>2-р курс</option>
+                <option>3-р курс</option>
+                <option>4-р курс</option>
+                <option>Магистр</option>
+                <option>Төгсөгч</option>
+              </optgroup>
+              <option>Эцэг эх / асран хамгаалагч</option>
+              <option>Бусад</option>
+            </select>
+          </div>
+
+          <div class="mb-5">
+            <label class="flex justify-between text-xs font-semibold text-oyunity-navy mb-2">
+              Сонирхож буй хөтөлбөр
+              <span class="text-gray-400 font-normal">Нэг буюу хэд хэдийг сонго</span>
+            </label>
+            <div class="flex flex-wrap gap-2" id="ctaPills">
+              <span class="cta-pill px-4 py-2 text-sm font-medium text-oyunity-navy bg-white border-[1.5px] border-border-primary rounded-full cursor-pointer transition hover:border-oyunity-blue hover:text-oyunity-blue select-none">Хэлний бэлтгэл</span>
+              <span class="cta-pill px-4 py-2 text-sm font-medium text-oyunity-navy bg-white border-[1.5px] border-border-primary rounded-full cursor-pointer transition hover:border-oyunity-blue hover:text-oyunity-blue select-none">Бүрэн зэрэг</span>
+              <span class="cta-pill px-4 py-2 text-sm font-medium text-oyunity-navy bg-white border-[1.5px] border-border-primary rounded-full cursor-pointer transition hover:border-oyunity-blue hover:text-oyunity-blue select-none">Солилцоо</span>
+              <span class="cta-pill px-4 py-2 text-sm font-medium text-oyunity-navy bg-white border-[1.5px] border-border-primary rounded-full cursor-pointer transition hover:border-oyunity-blue hover:text-oyunity-blue select-none">Менторшип</span>
+              <span class="cta-pill px-4 py-2 text-sm font-medium text-oyunity-navy bg-white border-[1.5px] border-border-primary rounded-full cursor-pointer transition hover:border-oyunity-blue hover:text-oyunity-blue select-none">Онлайн HSK</span>
+              <span class="cta-pill px-4 py-2 text-sm font-medium text-oyunity-navy bg-white border-[1.5px] border-border-primary rounded-full cursor-pointer transition hover:border-oyunity-blue hover:text-oyunity-blue select-none">Тодорхойгүй</span>
+            </div>
+          </div>
+
+          <div class="mb-7">
+            <label class="flex justify-between text-xs font-semibold text-oyunity-navy mb-2">
+              Нэмэлт мэдээлэл
+              <span class="text-gray-400 font-normal">Заавал биш</span>
+            </label>
+            <textarea rows="3" placeholder="Жишээ нь: HSK 4-тэй, Tsinghua сонирхож байгаа, 2027 онд элсэх төлөвлөгөөтэй." class="w-full px-4 py-3 text-[15px] border-[1.5px] border-border-primary rounded-lg focus:outline-none focus:border-oyunity-blue focus:ring-4 focus:ring-oyunity-blue/15 transition resize-y leading-snug"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-4 bg-oyunity-navy hover:bg-oyunity-blue text-white font-semibold text-[15px] rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-oyunity-blue/30">
+            Захиалга илгээх →
+          </button>
+
+          <p class="mt-5 text-center text-xs text-gray-500 leading-relaxed">
+            "Захиалга илгээх" дарснаар та манайхтай холбогдох зөвшөөрөл өгч байна.<br/>
+            Хувийн мэдээлэл зөвхөн Discovery Call-д ашиглагдана.
+          </p>
+        </form>
+
+        <!-- success -->
+        <div id="ctaSuccess" class="hidden text-center bg-white border-[1.5px] border-oyunity-green rounded-2xl p-10 shadow-lg shadow-oyunity-green/15">
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-full text-white text-3xl mb-6" style="background:linear-gradient(135deg,#22B14C,#1a8a3b)">✓</div>
+          <h3 class="font-serif text-3xl text-oyunity-navy mb-3">Захиалга хүлээж авлаа!</h3>
+          <p class="text-gray-500 mb-7">Манай баг <strong class="text-oyunity-navy">24 цагийн дотор</strong> тантай холбоо барина.</p>
+          <div class="text-left bg-oyunity-soft rounded-xl p-5 mb-6">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-oyunity-blue mb-3">Дараагийн алхам</h4>
+            <ol class="text-sm text-oyunity-navy leading-relaxed list-decimal pl-5 space-y-1">
+              <li>Манай Mentor coordinator тантай утсаар холбогдоно</li>
+              <li>Discovery Call-ын цагаа товлоно (30 мин)</li>
+              <li>Хувийн roadmap-ыг хамтран боловсруулна</li>
+            </ol>
+          </div>
+          <p class="text-xs text-gray-500">Утсаа бэлэн байлгаарай. Дугаар: <strong class="text-oyunity-navy">8000-1928</strong></p>
+        </div>
+
+        <!-- divider + phone -->
+        <div class="flex items-center gap-3 my-8 text-xs uppercase tracking-widest text-gray-400">
+          <div class="flex-1 h-px bg-border-primary"></div>
+          эсвэл
+          <div class="flex-1 h-px bg-border-primary"></div>
+        </div>
+
+        <a href="tel:80001928" class="block bg-white border-[1.5px] border-border-primary rounded-2xl p-6 hover:border-oyunity-blue hover:shadow-lg transition-all">
+          <div class="flex items-center gap-5">
+            <div class="w-13 h-13 flex-shrink-0 rounded-xl flex items-center justify-center text-white" style="width:52px;height:52px;background:linear-gradient(135deg,#29ABE2,#1B8FBF)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="flex-1">
+              <span class="text-xs uppercase tracking-wider text-gray-500 block">Шууд утсаар захиалах</span>
+              <span class="text-2xl font-bold text-oyunity-navy block leading-tight mt-0.5">8000-1928</span>
+              <span class="text-xs text-gray-500">10:00 – 20:00 · Даваа – Ням</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="bg-oyunity-soft border-t border-border-primary px-[5%] py-12 md:py-18 lg:py-20">
+  <div class="container mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-12 pb-12 md:pb-16">
+      <div class="md:col-span-1">
+        <a href="#" class="inline-block"><img src="oyunity-logo.png" alt="Oyunity" class="h-12 w-auto"></a>
+        <p class="mt-4 text-sm text-gray-600 leading-relaxed">
+          Elite Scholarship Mentorship Ecosystem.
+          Хятадын топ их сургуулиудад тэтгэлэгтэй элсэх premium consultancy.
+        </p>
+        <div class="mt-6 flex gap-3">
+          <a href="#" class="text-gray-500 hover:text-oyunity-blue-dark transition" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 01-1.38-.9 3.72 3.72 0 01-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.88 5.88 0 00-2.13 1.38A5.88 5.88 0 00.63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.73 1.46 1.38 2.13a5.88 5.88 0 002.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.88 5.88 0 002.13-1.38 5.88 5.88 0 001.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.88 5.88 0 00-1.38-2.13A5.88 5.88 0 0019.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.4-10.4a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg></a>
+          <a href="#" class="text-gray-500 hover:text-oyunity-blue-dark transition" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.23 2.69.23v2.97h-1.51c-1.49 0-1.96.93-1.96 1.88v2.26h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07"/></svg></a>
+          <a href="#" class="text-gray-500 hover:text-oyunity-blue-dark transition" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.51c-.28-1.05-1.1-1.87-2.14-2.15C19.46 3.86 12 3.86 12 3.86s-7.46 0-9.36.5c-1.04.28-1.86 1.1-2.14 2.15C0 8.41 0 12 0 12s0 3.59.5 5.49c.28 1.05 1.1 1.87 2.14 2.15 1.9.5 9.36.5 9.36.5s7.46 0 9.36-.5c1.04-.28 1.86-1.1 2.14-2.15.5-1.9.5-5.49.5-5.49s0-3.59-.5-5.49zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg></a>
+          <a href="#" class="text-gray-500 hover:text-oyunity-blue-dark transition" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005.8 20.1a6.34 6.34 0 0010.86-4.43V8.94a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.84-.37z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm font-sans text-oyunity-navy mb-4">Хөтөлбөрүүд</h4>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li><a href="#programs" class="hover:text-oyunity-blue-dark transition">Хэлний бэлтгэл</a></li>
+          <li><a href="#programs" class="hover:text-oyunity-blue-dark transition">Бакалавр / Магистр / Доктор</a></li>
+          <li><a href="#programs" class="hover:text-oyunity-blue-dark transition">Солилцоо</a></li>
+          <li><a href="#programs" class="hover:text-oyunity-blue-dark transition">Менторшип</a></li>
+          <li><a href="#programs" class="hover:text-oyunity-blue-dark transition">Онлайн HSK + CSCA</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm font-sans text-oyunity-navy mb-4">Компани</h4>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li><a href="#about" class="hover:text-oyunity-blue-dark transition">Бидний тухай</a></li>
+          <li><a href="#mentors" class="hover:text-oyunity-blue-dark transition">Менторууд</a></li>
+          <li><a href="#stories" class="hover:text-oyunity-blue-dark transition">Амжилтын түүхүүд</a></li>
+          <li><a href="#blog" class="hover:text-oyunity-blue-dark transition">Мэдлэгийн төв</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm font-sans text-oyunity-navy mb-4">Холбоо барих</h4>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li><a href="tel:80001928" class="hover:text-oyunity-blue-dark transition">8000-1928</a></li>
+          <li><a href="mailto:oyunityedu@gmail.com" class="hover:text-oyunity-blue-dark transition">oyunityedu@gmail.com</a></li>
+          <li>10:00 – 20:00</li>
+        </ul>
+        <a href="contact.html" class="mt-6 inline-block px-4 py-2 bg-oyunity-blue text-white text-sm font-medium rounded hover:bg-oyunity-blue-dark transition">Зөвлөгөө захиалах →</a>
+      </div>
+    </div>
+    <div class="border-t border-border-primary pt-6 flex flex-col md:flex-row justify-between gap-2 text-xs text-gray-500">
+      <p>© 2026 Oyunity. Бүх эрх хуулиар хамгаалагдсан.</p>
+      <div class="flex gap-4">
+        <a href="#" class="hover:text-oyunity-blue-dark transition">Privacy Policy</a>
+        <a href="#" class="hover:text-oyunity-blue-dark transition">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Mobile menu toggle
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const h1 = document.getElementById('ham1'), h2 = document.getElementById('ham2'), h3 = document.getElementById('ham3');
+  const open = menu.classList.toggle('hidden') === false;
+  h1.style.transform = open ? 'translateY(8px) rotate(45deg)' : '';
+  h2.style.opacity = open ? '0' : '';
+  h3.style.transform = open ? 'translateY(-8px) rotate(-45deg)' : '';
+}
+
+// Sticky nav appears once user scrolls past hero
+const stickyNav = document.getElementById('stickyNav');
+const heroSection = document.getElementById('hero');
+function updateStickyNav() {
+  if (!heroSection || !stickyNav) return;
+  const heroBottom = heroSection.offsetTop + heroSection.offsetHeight - 80;
+  if (window.scrollY > heroBottom) stickyNav.classList.add('visible');
+  else stickyNav.classList.remove('visible');
+}
+window.addEventListener('scroll', updateStickyNav, { passive: true });
+updateStickyNav();
+
+// CTA form — pill toggle + submit success state
+document.querySelectorAll('#ctaPills .cta-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    pill.classList.toggle('selected');
+    if (pill.classList.contains('selected')) {
+      pill.style.background = '#0B1B3B';
+      pill.style.borderColor = '#0B1B3B';
+      pill.style.color = '#fff';
+    } else {
+      pill.style.background = '';
+      pill.style.borderColor = '';
+      pill.style.color = '';
+    }
+  });
+});
+const ctaForm = document.getElementById('ctaForm');
+const ctaSuccess = document.getElementById('ctaSuccess');
+if (ctaForm && ctaSuccess) {
+  ctaForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    ctaForm.classList.add('hidden');
+    ctaSuccess.classList.remove('hidden');
+    ctaSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
+// FAQ accordion — first item open by default
+document.querySelectorAll('.faq-btn').forEach((btn, i) => {
+  const body = btn.nextElementSibling;
+  const icon = btn.querySelector('.faq-icon');
+  if (i === 0) { body.classList.remove('hidden'); icon.style.transform = 'rotate(45deg)'; }
+  btn.addEventListener('click', () => {
+    const isOpen = !body.classList.contains('hidden');
+    document.querySelectorAll('.faq-body').forEach(b => b.classList.add('hidden'));
+    document.querySelectorAll('.faq-icon').forEach(ic => ic.style.transform = '');
+    if (!isOpen) { body.classList.remove('hidden'); icon.style.transform = 'rotate(45deg)'; }
+  });
+});
+
+// Reveal on scroll
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+<!-- Oyunity scroll animation (auto-injected) -->
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function ready(fn){ document.readyState!=='loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
+  ready(function(){
+    try{
+      if(!reduce){
+        document.querySelectorAll('section').forEach(function(section){
+          if(section.id==='hero') return;
+          section.querySelectorAll('.grid').forEach(function(grid){
+            if(grid.closest('.reveal')) return;
+            var items = Array.prototype.filter.call(grid.children, function(c){return c.nodeType===1;});
+            if(items.length>1){
+              items.forEach(function(item,i){
+                if(!item.classList.contains('reveal')){
+                  item.classList.add('reveal');
+                  if(!item.style.transitionDelay) item.style.transitionDelay = Math.min(i*0.13,0.7)+'s';
+                }
+              });
+            }
+          });
+          var h = section.querySelector('h2');
+          if(h && !h.closest('.reveal')){
+            var block = h.parentElement;
+            if(block && block !== section && !block.classList.contains('reveal')) block.classList.add('reveal');
+          }
+        });
+      }
+    }catch(err){}
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+    if(!reduce){
+      var hero=document.getElementById('hero');
+      if(hero){
+        var h1=hero.querySelector('h1'); var content=h1?h1.parentElement:null;
+        var video=hero.querySelector('video, img'); var vh=window.innerHeight||800; var ticking=false;
+        function upd(){ var y=window.pageYOffset; if(y<=vh){ if(content){content.style.transform='translateY('+(y*0.5)+'px)';content.style.opacity=Math.max(0,1-y/(vh*0.6));} if(video){video.style.transform='scale('+(1+y/vh*0.2)+')';} } ticking=false; }
+        window.addEventListener('scroll',function(){ if(!ticking){requestAnimationFrame(upd);ticking=true;} },{passive:true});
+        window.addEventListener('resize',function(){vh=window.innerHeight;});
+      }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oyunity — 30 минутын үнэгүй зөвлөгөө захиалах</title>
+  <meta name="description" content="Хятадын топ их сургуульд тэтгэлэгтэй элсэх 30 минутын үнэгүй Discovery Call." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      color: #0B1B3B;
+      background: #FAFAF8;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; letter-spacing: -0.01em; line-height: 1.15; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    a { color: inherit; text-decoration: none; }
+
+    :root {
+      --gold: #FFCB05;
+      --gold-dark: #C8A000;
+      --blue: #29ABE2;
+      --blue-dark: #1B8FBF;
+      --blue-soft: #E5F4FB;
+      --navy: #0B1B3B;
+      --soft: #FAFAF8;
+      --border: #E5E7EB;
+      --gray: #6B7280;
+      --gray-light: #9CA3AF;
+      --green: #22B14C;
+    }
+
+    .page { min-height: 100vh; display: grid; grid-template-columns: 1fr; }
+    @media (min-width: 1024px) { .page { grid-template-columns: 1fr 1.1fr; } }
+
+    /* ============= LEFT — STORY PANEL ============= */
+    .left {
+      position: relative;
+      background: #0B1B3B;
+      color: #fff;
+      padding: 48px 32px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      overflow: hidden;
+    }
+    .left-video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: 0;
+    }
+    .left-overlay {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(135deg, rgba(11,27,59,0.4) 0%, rgba(27,143,191,0.3) 55%, rgba(41,171,226,0.25) 100%);
+    }
+    .left-overlay-2 {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(to bottom, transparent 30%, rgba(11,27,59,0.55) 100%);
+    }
+    @media (min-width: 1024px) { .left { padding: 64px 56px; min-height: 100vh; position: sticky; top: 0; } }
+    .left::before {
+      content: ''; position: absolute; top: -150px; right: -150px;
+      width: 400px; height: 400px; z-index: 2;
+      background: radial-gradient(circle, rgba(255,203,5,0.25) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .left::after {
+      content: ''; position: absolute; bottom: -200px; left: -200px;
+      width: 500px; height: 500px; z-index: 2;
+      background: radial-gradient(circle, rgba(41,171,226,0.18) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .left-top, .left-content, .left-bottom { position: relative; z-index: 3; }
+
+    .logo {
+      font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .logo .dot { color: var(--gold); }
+
+    .eyebrow {
+      display: inline-block; margin-top: 48px;
+      padding: 7px 16px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--gold);
+      border: 1px solid rgba(255,203,5,0.45);
+      border-radius: 999px;
+      background: rgba(255,203,5,0.1);
+    }
+    .left h1 { font-size: clamp(36px, 4.5vw, 56px); margin-top: 20px; margin-bottom: 20px; }
+    .left h1 .accent { color: var(--gold); }
+    .left .lead { font-size: 17px; color: rgba(255,255,255,0.82); line-height: 1.65; max-width: 480px; }
+
+    .trust-strip {
+      margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+      padding: 24px 0;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    .trust-stat .num { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--gold); line-height: 1; }
+    .trust-stat .lbl { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 6px; line-height: 1.3; }
+
+    .benefits { margin-top: 40px; }
+    .benefits h3 {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--gold); margin-bottom: 16px;
+    }
+    .benefit-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .benefit-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 15px; color: rgba(255,255,255,0.92); line-height: 1.5;
+    }
+    .check {
+      width: 22px; height: 22px; flex-shrink: 0;
+      border-radius: 50%; background: rgba(34,177,76,0.25);
+      display: flex; align-items: center; justify-content: center;
+      color: #6FE38C; font-weight: 700; font-size: 13px; margin-top: 2px;
+    }
+
+    .testimonial {
+      margin-top: 40px; padding: 24px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+    }
+    .testimonial .quote-mark { font-family: 'DM Serif Display', serif; font-size: 48px; color: var(--gold); line-height: 0.5; margin-bottom: 12px; }
+    .testimonial p { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.9); margin-bottom: 16px; font-style: italic; }
+    .testimonial .author { display: flex; align-items: center; gap: 12px; }
+    .testimonial .avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: var(--navy);
+    }
+    .testimonial .author-info .name { font-size: 14px; font-weight: 600; color: #fff; }
+    .testimonial .author-info .role { font-size: 12px; color: rgba(255,255,255,0.65); }
+
+    .left-bottom { margin-top: 40px; padding-top: 24px; font-size: 13px; color: rgba(255,255,255,0.6); }
+    .left-bottom strong { color: rgba(255,255,255,0.9); }
+
+    /* ============= RIGHT — FORM PANEL ============= */
+    .right {
+      background: #FAFAF8; padding: 48px 32px;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    @media (min-width: 1024px) { .right { padding: 64px 56px; align-items: center; min-height: 100vh; } }
+    .form-wrap { width: 100%; max-width: 520px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--gray); margin-bottom: 24px;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--blue); }
+
+    .progress { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+    .progress .step { flex: 1; height: 4px; background: var(--border); border-radius: 2px; transition: background .3s; }
+    .progress .step.active { background: var(--blue); }
+    .progress-text { font-size: 12px; color: var(--gray); margin-bottom: 24px; }
+
+    .form-head { margin-bottom: 32px; }
+    .form-head h2 { font-size: clamp(26px, 3vw, 34px); color: var(--navy); margin-bottom: 10px; }
+    .form-head p { color: var(--gray); font-size: 15px; }
+
+    .form-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px;
+      padding: 32px; box-shadow: 0 4px 20px rgba(11,27,59,0.04);
+    }
+
+    .field { margin-bottom: 20px; }
+    .field:last-of-type { margin-bottom: 28px; }
+    .field label {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 8px;
+    }
+    .field .required { color: var(--blue); font-weight: 700; }
+    .field .hint { font-weight: 400; color: var(--gray-light); font-size: 12px; }
+
+    .input, .select, .textarea {
+      width: 100%; padding: 13px 16px;
+      font-size: 15px; font-family: inherit; color: var(--navy);
+      background: #fff; border: 1.5px solid var(--border);
+      border-radius: 8px; transition: all .2s;
+    }
+    .input:focus, .select:focus, .textarea:focus {
+      outline: none; border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(41,171,226,0.14);
+    }
+    .input::placeholder, .textarea::placeholder { color: var(--gray-light); }
+    .select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3e%3cpath d='m6 9 6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat; background-position: right 14px center;
+      background-size: 18px; padding-right: 42px;
+    }
+    .textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 480px) { .row-2 { grid-template-columns: 1fr 1fr; } }
+
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      padding: 9px 16px;
+      font-size: 13px; font-weight: 500; color: var(--navy);
+      background: #fff; border: 1.5px solid var(--border);
+      border-radius: 999px; cursor: pointer;
+      transition: all .2s; user-select: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .pill:hover { border-color: var(--blue); color: var(--blue); }
+    .pill.selected { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+    .btn-submit {
+      width: 100%; padding: 16px;
+      background: var(--blue); color: #fff; border-radius: 8px;
+      font-size: 15px; font-weight: 600; transition: all .2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-submit:hover {
+      background: var(--blue-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(41,171,226,0.35);
+    }
+    .btn-submit:active { transform: translateY(0); }
+
+    .form-foot {
+      margin-top: 20px; text-align: center;
+      font-size: 12px; color: var(--gray); line-height: 1.6;
+    }
+    .form-foot a { color: var(--navy); font-weight: 600; }
+    .form-foot a:hover { color: var(--blue); }
+
+    .or-divider {
+      display: flex; align-items: center; gap: 12px; margin: 32px 0;
+      font-size: 12px; color: var(--gray-light);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .or-divider::before, .or-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .phone-cta {
+      background: #fff; border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 24px 28px;
+      display: flex; align-items: center; gap: 20px;
+      transition: all .2s;
+    }
+    .phone-cta:hover { border-color: var(--blue); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .phone-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; flex-shrink: 0;
+    }
+    .phone-text { flex: 1; }
+    .phone-text .lbl { font-size: 12px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.06em; }
+    .phone-text .num { font-size: 22px; font-weight: 700; color: var(--navy); margin-top: 2px; display: block; }
+    .phone-text .hrs { font-size: 12px; color: var(--gray); margin-top: 2px; }
+
+    .success {
+      display: none; text-align: center;
+      padding: 48px 32px;
+      background: #fff; border: 1.5px solid var(--green); border-radius: 14px;
+      box-shadow: 0 8px 30px rgba(34,177,76,0.15);
+    }
+    .success.show { display: block; }
+    .success .badge {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--green), #1a8a3b);
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 32px; margin-bottom: 24px;
+    }
+    .success h3 { font-size: 28px; color: var(--navy); margin-bottom: 12px; }
+    .success p { color: var(--gray); margin-bottom: 28px; }
+    .success .next-steps {
+      text-align: left; background: var(--soft); border-radius: 10px;
+      padding: 20px; margin-bottom: 24px;
+    }
+    .success .next-steps h4 {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--blue); margin-bottom: 12px;
+    }
+    .success .next-steps ol {
+      padding-left: 20px; font-size: 14px; color: var(--navy); line-height: 1.7;
+    }
+  </style>
+<style>
+.reveal{opacity:0;transform: translateY(48px) scale(0.97);transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1!important;transform:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- =========== LEFT PANEL =========== -->
+    <aside class="left">
+      <video autoplay loop muted playsinline class="left-video">
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4" type="video/mp4">
+      </video>
+      <div class="left-overlay"></div>
+      <div class="left-overlay-2"></div>
+
+      <div class="left-top">
+        <a href="Oyunity Landing Page v2.html" class="inline-block"><img src="oyunity-logo.png" alt="Oyunity" style="height:56px;width:auto;filter:brightness(0) invert(1)"></a>
+      </div>
+
+      <div class="left-content">
+        <span class="eyebrow">Discovery Call · Үнэгүй</span>
+        <h1>
+          30 минут.
+          <span class="accent">Хятад руугаа замаа</span>
+          тодорхой болго.
+        </h1>
+        <p class="lead">
+          Discovery Call дээр бид зөвхөн сонсоно — таны зорилго, түвшин, цаг хугацаа, төсөв.
+          Эцэст нь зөв дараагийн алхамаа санал болгоно. Худалдан авах үүрэг үгүй.
+        </p>
+
+        <div class="trust-strip">
+          <div class="trust-stat">
+            <div class="num">300</div>
+            <div class="lbl">Амжилттай оюутан</div>
+          </div>
+          <div class="trust-stat">
+            <div class="num">76.7%</div>
+            <div class="lbl">Тэтгэлэгтэй элсэлт</div>
+          </div>
+          <div class="trust-stat">
+            <div class="num">45</div>
+            <div class="lbl">Партнер сургууль</div>
+          </div>
+        </div>
+
+        <div class="benefits">
+          <h3>Юу авах вэ?</h3>
+          <ul class="benefit-list">
+            <li><span class="check">✓</span><span>Танай түвшинд тохирох <strong>хувийн roadmap</strong></span></li>
+            <li><span class="check">✓</span><span>Тэтгэлэг авах <strong>стратегийн зөвлөгөө</strong> (CSC, Confucius, university scholarship)</span></li>
+            <li><span class="check">✓</span><span>Сургууль / мэргэжил сонголтын <strong>shortlist</strong></span></li>
+            <li><span class="check">✓</span><span>Танай түвшинд тохирох <strong>хөтөлбөрийн санал</strong></span></li>
+          </ul>
+        </div>
+
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <p>Discovery call дээр анх удаа Tsinghua-д тэтгэлэгтэй элсэх боломжтой гэдгийг мэдсэн. 2 жилийн дараа тэр мөрөөдөл бодит болсон.</p>
+          <div class="author">
+            <div class="avatar">А</div>
+            <div class="author-info">
+              <div class="name">Амархүү</div>
+              <div class="role">Tsinghua University, Full scholarship</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="left-bottom">
+        <strong>🔒 Хувийн мэдээллийг хамгаална.</strong>
+        Та илгээсэн мэдээлэл зөвхөн Discovery Call-д ашиглагдана.
+      </div>
+    </aside>
+
+    <!-- =========== RIGHT PANEL — FORM =========== -->
+    <main class="right">
+      <div class="form-wrap">
+
+        <a href="Oyunity Landing Page v2.html" class="back-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Нүүр хуудас руу буцах
+        </a>
+
+        <div class="progress">
+          <div class="step active"></div>
+          <div class="step active"></div>
+          <div class="step active"></div>
+        </div>
+        <p class="progress-text">3 минутын маягт · 5 талбар</p>
+
+        <div class="form-head">
+          <h2>Захиалгаа илгээгээрэй</h2>
+          <p>Манай баг <strong>24 цагийн дотор</strong> тантай холбоо барина.</p>
+        </div>
+
+        <form class="form-card" id="callForm">
+          <div class="field">
+            <label>Нэр <span class="required">*</span></label>
+            <input class="input" type="text" placeholder="Жишээ нь: Болормаа" required />
+          </div>
+
+          <div class="row-2">
+            <div class="field">
+              <label>Утас <span class="required">*</span></label>
+              <input class="input" type="tel" placeholder="9911-2233" required />
+            </div>
+            <div class="field">
+              <label>И-мэйл <span class="required">*</span></label>
+              <input class="input" type="email" placeholder="name@gmail.com" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Анги / Курс <span class="required">*</span></label>
+            <select class="select" required>
+              <option value="">Сонгоно уу...</option>
+              <optgroup label="Ахлах сургууль">
+                <option>9-р анги</option>
+                <option>10-р анги</option>
+                <option>11-р анги</option>
+                <option>12-р анги</option>
+              </optgroup>
+              <optgroup label="Их сургууль">
+                <option>1-р курс</option>
+                <option>2-р курс</option>
+                <option>3-р курс</option>
+                <option>4-р курс</option>
+                <option>Магистр</option>
+                <option>Төгсөгч</option>
+              </optgroup>
+              <option>Эцэг эх / асран хамгаалагч</option>
+              <option>Бусад</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Сонирхож буй хөтөлбөр <span class="hint">Нэг буюу хэд хэдийг сонго</span></label>
+            <div class="pills" id="programPills">
+              <span class="pill" data-value="hsk">Хэлний бэлтгэл</span>
+              <span class="pill" data-value="placement">Бүрэн зэрэг</span>
+              <span class="pill" data-value="exchange">Солилцоо</span>
+              <span class="pill" data-value="mentorship">Менторшип</span>
+              <span class="pill" data-value="online">Онлайн HSK</span>
+              <span class="pill" data-value="unsure">Тодорхойгүй</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Нэмэлт мэдээлэл <span class="hint">Заавал биш</span></label>
+            <textarea class="textarea" placeholder="Жишээ нь: HSK 4-тэй, Tsinghua сонирхож байгаа, 2027 онд элсэх төлөвлөгөөтэй."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            Захиалга илгээх →
+          </button>
+
+          <p class="form-foot">
+            "Захиалга илгээх" дарснаар та манайхтай холбогдох зөвшөөрөл өгч байна.
+            <br />Хувийн мэдээлэл зөвхөн Discovery Call-д ашиглагдана.
+          </p>
+        </form>
+
+        <div class="success" id="successBox">
+          <div class="badge">✓</div>
+          <h3>Захиалга хүлээж авлаа!</h3>
+          <p>Манай баг <strong>24 цагийн дотор</strong> тантай холбоо барина.</p>
+
+          <div class="next-steps">
+            <h4>Дараагийн алхам</h4>
+            <ol>
+              <li>Манай Mentor coordinator тантай утсаар холбогдоно</li>
+              <li>Discovery Call-ын цагаа товлоно (30 мин)</li>
+              <li>Хувийн roadmap-ыг хамтран боловсруулна</li>
+            </ol>
+          </div>
+
+          <p style="font-size: 13px; color: var(--gray);">
+            Утсаа бэлэн байлгаарай. Дугаар: <strong style="color: var(--navy);">8000-1928</strong>
+          </p>
+        </div>
+
+        <div class="or-divider">эсвэл</div>
+
+        <a href="tel:80001928" class="phone-cta">
+          <div class="phone-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div class="phone-text">
+            <span class="lbl">Шууд утсаар захиалах</span>
+            <span class="num">8000-1928</span>
+            <span class="hrs">10:00 – 20:00 · Даваа – Ням</span>
+          </div>
+        </a>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    document.querySelectorAll('#programPills .pill').forEach(pill => {
+      pill.addEventListener('click', () => pill.classList.toggle('selected'));
+    });
+    const form = document.getElementById('callForm');
+    const success = document.getElementById('successBox');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      form.style.display = 'none';
+      success.classList.add('show');
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  </script>
+<!-- Oyunity scroll animation (auto-injected) -->
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function ready(fn){ document.readyState!=='loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
+  ready(function(){
+    try{
+      if(!reduce){
+        document.querySelectorAll('section').forEach(function(section){
+          if(section.id==='hero') return;
+          section.querySelectorAll('.grid').forEach(function(grid){
+            if(grid.closest('.reveal')) return;
+            var items = Array.prototype.filter.call(grid.children, function(c){return c.nodeType===1;});
+            if(items.length>1){
+              items.forEach(function(item,i){
+                if(!item.classList.contains('reveal')){
+                  item.classList.add('reveal');
+                  if(!item.style.transitionDelay) item.style.transitionDelay = Math.min(i*0.13,0.7)+'s';
+                }
+              });
+            }
+          });
+          var h = section.querySelector('h2');
+          if(h && !h.closest('.reveal')){
+            var block = h.parentElement;
+            if(block && block !== section && !block.classList.contains('reveal')) block.classList.add('reveal');
+          }
+        });
+      }
+    }catch(err){}
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+    if(!reduce){
+      var hero=document.getElementById('hero');
+      if(hero){
+        var h1=hero.querySelector('h1'); var content=h1?h1.parentElement:null;
+        var video=hero.querySelector('video, img'); var vh=window.innerHeight||800; var ticking=false;
+        function upd(){ var y=window.pageYOffset; if(y<=vh){ if(content){content.style.transform='translateY('+(y*0.5)+'px)';content.style.opacity=Math.max(0,1-y/(vh*0.6));} if(video){video.style.transform='scale('+(1+y/vh*0.2)+')';} } ticking=false; }
+        window.addEventListener('scroll',function(){ if(!ticking){requestAnimationFrame(upd);ticking=true;} },{passive:true});
+        window.addEventListener('resize',function(){vh=window.innerHeight;});
+      }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
